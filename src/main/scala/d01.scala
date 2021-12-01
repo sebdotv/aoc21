@@ -13,4 +13,10 @@ object d01 {
     }
     it(list, 0, None)
   }
+
+  def countIncSliding(list: List[Int]): Int =
+    countInc(slidingSum(list))
+
+  def slidingSum(list: List[Int]): List[Int] =
+    list.sliding(3).map(_.sum).toList
 }
