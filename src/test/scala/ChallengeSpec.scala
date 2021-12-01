@@ -6,13 +6,9 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   "lazy coder" should "do d01" in {
     import d01._
     // examples
-    massToFuel(12) mustBe 2
-    massToFuel(14) mustBe 2
-    massToFuel(1969) mustBe 654
-    massToFuel(100756) mustBe 33583
+    countInc(List(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)) mustBe 7
     // input
-    val input = load("input/01.txt")
-    result(input) mustBe 3560353
-    result(input) mustBe 5337642
+    val input = load("input/01.txt").map(_.toInt)
+    countInc(input) mustBe 1462
   }
 }
