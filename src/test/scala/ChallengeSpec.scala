@@ -30,5 +30,6 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = load("input/02.txt")
     finalState(input, interpreter1).pos mustBe (2105, 807)
+    finalState(input, interpreter2).pos mustBe (2105, 757618)
   }
 }
