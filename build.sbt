@@ -6,6 +6,10 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 Compile / compile / wartremoverErrors ++= Warts.allBut(Wart.StringPlusAny, Wart.Throw, Wart.Nothing)
 
-libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.0"
+// scalafix semanticdb
+semanticdbEnabled := true
+semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
 
+libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test"
