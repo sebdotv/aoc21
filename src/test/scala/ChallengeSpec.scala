@@ -15,4 +15,19 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     countInc(input) mustBe 1462
     countIncSliding(input) mustBe 1497
   }
+
+  it should "do d02" in {
+    import d02._
+    // examples
+    val example = """forward 5
+                    |down 5
+                    |forward 8
+                    |up 3
+                    |down 8
+                    |forward 2""".stripMargin.splitLines
+    finalPos(example) mustBe Pos(15, 10)
+    // input
+    val input = load("input/02.txt")
+    finalPos(input) mustBe Pos(2105, 807)
+  }
 }

@@ -17,4 +17,14 @@ package object aoc {
       }
     } yield line
 
+  implicit class EitherOps[A, B](val e: Either[A, B]) extends AnyVal {
+    @inline def unsafeGet(): B =
+      e match {
+        case Left(t: Throwable) => throw new NoSuchElementException("Either.unsafeGet on Left").initCause(t)
+        case Left(s: String)    => throw new NoSuchElementException(s"Either.unsafeGet on Left: $s")
+        case Left(_)            => throw new NoSuchElementException("Either.unsafeGet on Left")
+        case Right(b)           => b
+      }
+  }
+
 }
