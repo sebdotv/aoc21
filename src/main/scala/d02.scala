@@ -28,16 +28,19 @@ object d02 {
       case _ => Left("illegal command")
     }
 
-  def finalPos(lines: List[String]): Pos = {
+  type Interpreter = (Pos, Cmd) => Pos
+  val interpreter1: Interpreter = { case (pos, Cmd(dir, value)) =>
+    dir match {
+      case Forward => pos.copy(horiz = pos.horiz + value)
+      case Down    => pos.copy(depth = pos.depth + value)
+      case Up      => pos.copy(depth = pos.depth - value)
+    }
+  }
+
+  def finalPos(lines: List[String], interpreter: Interpreter): Pos = {
     lines
       .map(parseCmd)
       .map(_.unsafeGet())
-      .foldLeft(Pos.zero) { case (pos, Cmd(dir, value)) =>
-        dir match {
-          case Forward => pos.copy(horiz = pos.horiz + value)
-          case Down    => pos.copy(depth = pos.depth + value)
-          case Up      => pos.copy(depth = pos.depth - value)
-        }
-      }
+      .foldLeft(Pos.zero)(interpreter)
   }
 }

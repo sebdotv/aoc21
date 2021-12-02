@@ -25,9 +25,9 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
                     |up 3
                     |down 8
                     |forward 2""".stripMargin.splitLines
-    finalPos(example) mustBe Pos(15, 10, 0)
+    finalPos(example, interpreter1) mustBe Pos(15, 10, 0)
     // input
     val input = load("input/02.txt")
-    finalPos(input) mustBe Pos(2105, 807, 0)
+    finalPos(input, interpreter1) mustBe Pos(2105, 807, 0)
   }
 }
