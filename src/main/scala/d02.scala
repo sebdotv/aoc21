@@ -6,11 +6,11 @@ object d02 {
   case object Down extends Dir
   case object Up extends Dir
 
-  case class Pos(horiz: Int, depth: Int, aim: Int)
+  final case class Pos(horiz: Int, depth: Int, aim: Int)
   object Pos {
     def zero: Pos = Pos(0, 0, 0)
   }
-  case class Cmd(dir: Dir, value: Int)
+  final case class Cmd(dir: Dir, value: Int)
 
   def parseCmd(s: String): Either[String, Cmd] =
     s.split(" ") match {
