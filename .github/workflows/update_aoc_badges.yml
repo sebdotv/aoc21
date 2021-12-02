@@ -20,6 +20,7 @@ jobs:
         with:
           userid: ${{ secrets.AOC_USERID }}      # your user id, see setup on how to obtain
           session: ${{ secrets.AOC_SESSION }}    # secret containing session code, see setup on how to obtain
+          daysCompletedRegex: (?<=https:\/\/img\.shields\.io\/badge\/days%20completed-)[0-9]+(?=-\w+)
           
 #         Optional inputs:
 #         
