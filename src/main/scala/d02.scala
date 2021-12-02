@@ -6,11 +6,13 @@ object d02 {
   case object Down extends Dir
   case object Up extends Dir
 
-  final case class Pos(horiz: Int, depth: Int, aim: Int)
-  object Pos {
-    def zero: Pos = Pos(0, 0, 0)
+  final case class State(horiz: Int, depth: Int, aim: Int) {
+    def pos: (Int, Int) = (horiz, depth)
   }
-  final case class Cmd(dir: Dir, value: Int)
+  object State {
+    def zero: State = State(0, 0, 0)
+  }
+  final case class Cmd(dir: Dir, x: Int)
 
   def parseCmd(s: String): Either[String, Cmd] =
     s.split(" ") match {
@@ -28,19 +30,25 @@ object d02 {
       case _ => Left("illegal command")
     }
 
-  type Interpreter = (Pos, Cmd) => Pos
-  val interpreter1: Interpreter = { case (pos, Cmd(dir, value)) =>
+  type Interpreter = (State, Cmd) => State
+  val interpreter1: Interpreter = { case (state, Cmd(dir, x)) =>
     dir match {
-      case Forward => pos.copy(horiz = pos.horiz + value)
-      case Down    => pos.copy(depth = pos.depth + value)
-      case Up      => pos.copy(depth = pos.depth - value)
+      case Forward => state.copy(horiz = state.horiz + x)
+      case Down    => state.copy(depth = state.depth + x)
+      case Up      => state.copy(depth = state.depth - x)
+    }
+  }
+  val interpreter2: Interpreter = { case (state, Cmd(dir, x)) =>
+    dir match {
+      case Forward => state.copy(horiz = state.horiz + x, depth = state.depth + state.aim * x)
+      case Down    => state.copy(aim = state.aim + x)
+      case Up      => state.copy(aim = state.aim - x)
     }
   }
 
-  def finalPos(lines: List[String], interpreter: Interpreter): Pos = {
+  def finalState(lines: List[String], interpreter: Interpreter): State =
     lines
       .map(parseCmd)
       .map(_.unsafeGet())
-      .foldLeft(Pos.zero)(interpreter)
-  }
+      .foldLeft(State.zero)(interpreter)
 }
