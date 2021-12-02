@@ -19,12 +19,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   it should "do d02" in {
     import d02._
     // examples
-    val example = """forward 5
-                    |down 5
-                    |forward 8
-                    |up 3
-                    |down 8
-                    |forward 2""".stripMargin.splitLines
+    val example = List("forward 5", "down 5", "forward 8", "up 3", "down 8", "forward 2")
     finalState(example, interpreter1).pos mustBe (15, 10)
     finalState(example, interpreter2).pos mustBe (15, 60)
     // input

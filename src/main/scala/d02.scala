@@ -13,22 +13,23 @@ object d02 {
     def zero: State = State(0, 0, 0)
   }
   final case class Cmd(dir: Dir, x: Int)
-
-  def parseCmd(s: String): Either[String, Cmd] =
-    s.split(" ") match {
-      case Array(d, v) =>
-        Right(
-          Cmd(
-            d match {
-              case "forward" => Forward
-              case "down"    => Down
-              case "up"      => Up
-            },
-            v.toInt
+  object Cmd {
+    def parse(s: String): Either[String, Cmd] =
+      s.split(" ") match {
+        case Array(d, v) =>
+          Right(
+            Cmd(
+              d match {
+                case "forward" => Forward
+                case "down"    => Down
+                case "up"      => Up
+              },
+              v.toInt
+            )
           )
-        )
-      case _ => Left("illegal command")
-    }
+        case _ => Left("illegal command")
+      }
+  }
 
   type Interpreter = (State, Cmd) => State
   val interpreter1: Interpreter = { case (state, Cmd(dir, x)) =>
@@ -48,7 +49,7 @@ object d02 {
 
   def finalState(lines: List[String], interpreter: Interpreter): State =
     lines
-      .map(parseCmd)
+      .map(Cmd.parse)
       .map(_.unsafeGet())
       .foldLeft(State.zero)(interpreter)
 }
