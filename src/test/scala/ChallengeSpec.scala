@@ -42,5 +42,10 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = NonEmptyList.fromList(unsafeLoad("input/03.txt")).unsafeGet()
     power(input) mustBe 4138664
+    // part 2
+    o2Gen(example) mustBe 23
+    co2Scrub(example) mustBe 10
+    lifeSupport(example) mustBe 230
+    lifeSupport(input) mustBe 4273224
   }
 }
