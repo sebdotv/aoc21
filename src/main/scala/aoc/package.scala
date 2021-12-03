@@ -17,12 +17,19 @@ package object aoc {
       }
     } yield line
 
+  implicit class OptionOps[A](private val o: Option[A]) extends AnyVal {
+    @inline def unsafeGet(): A =
+      o match {
+        case None    => throw new NoSuchElementException("Option.unsafeGet() on None")
+        case Some(a) => a
+      }
+  }
   implicit class EitherOps[A, B](private val e: Either[A, B]) extends AnyVal {
     @inline def unsafeGet(): B =
       e match {
-        case Left(t: Throwable) => throw new NoSuchElementException("Either.unsafeGet on Left").initCause(t)
-        case Left(s: String)    => throw new NoSuchElementException(s"Either.unsafeGet on Left: $s")
-        case Left(_)            => throw new NoSuchElementException("Either.unsafeGet on Left")
+        case Left(t: Throwable) => throw new NoSuchElementException("Either.unsafeGet() on Left").initCause(t)
+        case Left(s: String)    => throw new NoSuchElementException(s"Either.unsafeGet() on Left: $s")
+        case Left(_)            => throw new NoSuchElementException("Either.unsafeGet() on Left")
         case Right(b)           => b
       }
   }
