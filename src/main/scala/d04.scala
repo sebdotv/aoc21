@@ -1,5 +1,7 @@
-import scala.annotation.tailrec
+import aoc._
 import cats.implicits._
+
+import scala.annotation.tailrec
 
 object d04 {
   final case class Input(draw: List[Int], boards: List[Board])
@@ -45,19 +47,33 @@ object d04 {
   }
 
   /** @return
-    *   score and number of draws
+    *   (score, number of draws)
     */
-  def score(input: Input, b: Int): (Int, Int) = {
+  def score(input: Input, board: Board): (Int, Int) = {
     @tailrec
-    def it(remaining: List[Int], board: Board): (Int, Int) =
+    def it(remaining: List[Int], board: Board): (Int, Int) = {
       remaining match {
         case h :: t =>
           val updated = board.mark(h)
-          if (updated.isWinner) (h * updated.unmarkedSum, board.draws)
+          if (updated.isWinner) (h * updated.unmarkedSum, updated.draws)
           else it(t, updated)
         case Nil => (0, board.draws)
       }
-    it(input.draw, input.boards(b))
+    }
+
+    it(input.draw, board)
   }
+
+  /** @param scores
+    *   list of (score, number of draws)
+    */
+  final case class Scores(scores: List[(Int, Int)]) {
+    def firstToWin: ((Int, Int), Int) =
+      scores.zipWithIndex.sortBy { case ((_, draws), _) => draws }.headOption.unsafeGet()
+    def lastToWin: ((Int, Int), Int) =
+      scores.zipWithIndex.sortBy { case ((_, draws), _) => -draws }.headOption.unsafeGet()
+  }
+  def scores(input: Input): Scores =
+    Scores(input.boards.map(score(input, _)))
 
 }

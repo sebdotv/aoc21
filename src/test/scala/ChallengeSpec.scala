@@ -82,10 +82,14 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     board = List(24).foldLeft(board)(_.mark(_))
     board.winningRows mustBe List(0)
     board.unmarkedSum mustBe 188
-    score(example, 2)._1 mustBe 4512
+    score(example, example.boards(2))._1 mustBe 4512
+    val exampleScores = scores(example)
+    exampleScores.firstToWin mustBe ((4512, 12), 2)
+    exampleScores.lastToWin mustBe ((1924, 15), 1)
     // input
     val input = parse(unsafeLoad("input/04.txt"))
-    val scores = input.boards.indices.toList.map(i => i -> score(input, i)).sortBy { case (_, (_, draws)) => draws }
-    assert(scores.head._2._1 === 41503)
+    val inputScores = scores(input)
+    inputScores.firstToWin._1._1 mustBe 41503
+    inputScores.lastToWin._1._1 mustBe 3178
   }
 }
