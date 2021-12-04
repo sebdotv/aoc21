@@ -48,4 +48,44 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     lifeSupport(example) mustBe 230
     lifeSupport(input) mustBe 4273224
   }
+
+  it should "do d04" in {
+    import d04._
+    val example = parse("""7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+        |
+        |22 13 17 11  0
+        | 8  2 23  4 24
+        |21  9 14 16  7
+        | 6 10  3 18  5
+        | 1 12 20 15 19
+        |
+        | 3 15  0  2 22
+        | 9 18 13 17  5
+        |19  8  7 25 23
+        |20 11 10 24  4
+        |14 21 16 12  6
+        |
+        |14 21 17 24  4
+        |10 16 15  9 19
+        |18  8 23 26 20
+        |22 11 13  6  5
+        | 2  0 12  3  7""".stripMargin.splitLines)
+    example.draw mustBe List(7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1)
+    example.boards.head.rows.head mustBe List(22, 13, 17, 11, 0)
+    example.boards(2).rows(4) mustBe List(2, 0, 12, 3, 7)
+    var board = example.boards(2)
+    board.winningRows mustBe Nil
+    board = List(7, 4, 9, 5, 11).foldLeft(board)(_.mark(_))
+    board.winningRows mustBe Nil
+    board = List(17, 23, 2, 0, 14, 21).foldLeft(board)(_.mark(_))
+    board.winningRows mustBe Nil
+    board = List(24).foldLeft(board)(_.mark(_))
+    board.winningRows mustBe List(0)
+    board.unmarkedSum mustBe 188
+    score(example, 2)._1 mustBe 4512
+    // input
+    val input = parse(unsafeLoad("input/04.txt"))
+    val scores = input.boards.indices.toList.map(i => i -> score(input, i)).sortBy { case (_, (_, draws)) => draws }
+    assert(scores.head._2._1 === 41503)
+  }
 }
