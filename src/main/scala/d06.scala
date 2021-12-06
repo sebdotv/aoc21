@@ -39,19 +39,9 @@ object d06 {
     assert(indivsByAge.size === 9)
     def indivCount: Long = indivsByAge.sum
     def next: FastSim = {
-      FastSim(
-        indivsByAge = Vector(
-          indivsByAge(1), // 0
-          indivsByAge(2), // 1
-          indivsByAge(3), // 2
-          indivsByAge(4), // 3
-          indivsByAge(5), // 4
-          indivsByAge(6), // 5
-          indivsByAge(7) + indivsByAge(0), // 6
-          indivsByAge(8), // 7
-          indivsByAge(0) // 8
-        )
-      )
+      val head +: tail = indivsByAge
+      val rotated = tail :+ head
+      FastSim(rotated.updated(6, rotated(6) + head))
     }
   }
   object FastSim {
