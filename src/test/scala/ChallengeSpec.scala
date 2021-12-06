@@ -92,4 +92,20 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     inputScores.firstToWin._1._1 mustBe 41503
     inputScores.lastToWin._1._1 mustBe 3178
   }
+
+  it should "do d06" in {
+    import d06._
+    var state = SimState(Vector(3, 4, 3, 1, 2))
+    state = state.next
+    state.indivs mustBe Vector(2, 3, 2, 0, 1)
+    for (_ <- 1 to 17) state = state.next
+    state.indivs mustBe Vector(6, 0, 6, 4, 5, 6, 0, 1, 1, 2, 6, 0, 1, 1, 1, 2, 2, 3, 3, 4, 6, 7, 8, 8, 8, 8)
+    state.indivs.size mustBe 26
+    for (_ <- 1 to 80 - 18) state = state.next
+    state.indivs.size mustBe 5934
+    // input
+    var s = SimState(unsafeLoadLine("input/06.txt").split(",").map(_.toInt).toVector)
+    for (_ <- 1 to 80) s = s.next
+    s.indivs.size mustBe 365862
+  }
 }
