@@ -93,6 +93,52 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     inputScores.lastToWin._1._1 mustBe 3178
   }
 
+  it should "do d05" in {
+    import d05._
+    // example
+    val exampleData = """0,9 -> 5,9
+                        |8,0 -> 0,8
+                        |9,4 -> 3,4
+                        |2,2 -> 2,1
+                        |7,0 -> 7,4
+                        |6,4 -> 2,0
+                        |0,9 -> 2,9
+                        |3,4 -> 1,4
+                        |0,0 -> 8,8
+                        |5,5 -> 8,2""".stripMargin.splitLines
+    val example1 = parse(exampleData, withDiagonals = false)
+    example1.toStrLines mustBe """.......1..
+                                |..1....1..
+                                |..1....1..
+                                |.......1..
+                                |.112111211
+                                |..........
+                                |..........
+                                |..........
+                                |..........
+                                |222111....""".stripMargin.splitLines
+    example1.countDangerous mustBe 5
+    // input
+    val inputData = unsafeLoad("input/05.txt")
+    val input1 = parse(inputData, withDiagonals = false)
+    input1.countDangerous mustBe 4728
+    // part 2
+    val example2 = parse(exampleData, withDiagonals = true)
+    example2.toStrLines mustBe """1.1....11.
+                                 |.111...2..
+                                 |..2.1.111.
+                                 |...1.2.2..
+                                 |.112313211
+                                 |...1.2....
+                                 |..1...1...
+                                 |.1.....1..
+                                 |1.......1.
+                                 |222111....""".stripMargin.splitLines
+    example2.countDangerous mustBe 12
+    val input2 = parse(inputData, withDiagonals = true)
+    input2.countDangerous mustBe 17717
+  }
+
   it should "do d06" in {
     import d06._
     val example = FastSim.fromIndivs(Vector(3, 4, 3, 1, 2))
