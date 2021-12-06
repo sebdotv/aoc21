@@ -35,12 +35,12 @@ object d06 {
     }
   }
 
-  final class FastSim(indivsByAge: Array[Long]) extends Sim {
-    assert(indivsByAge.length === 9)
+  final case class FastSim(indivsByAge: Vector[Long]) extends Sim {
+    assert(indivsByAge.size === 9)
     def indivCount: Long = indivsByAge.sum
     def next: FastSim = {
-      new FastSim(
-        indivsByAge = Array(
+      FastSim(
+        indivsByAge = Vector(
           indivsByAge(1), // 0
           indivsByAge(2), // 1
           indivsByAge(3), // 2
@@ -57,7 +57,7 @@ object d06 {
   object FastSim {
     def fromIndivs(indivs: Seq[Int]): FastSim = {
       val counts = for (i <- 0 to 8) yield indivs.count(_ === i).toLong
-      new FastSim(counts.toArray)
+      FastSim(counts.toVector)
     }
   }
 }
