@@ -4,7 +4,9 @@ scalaVersion := "2.13.7"
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
-Compile / compile / wartremoverErrors ++= Warts.allBut(Wart.StringPlusAny, Wart.Throw, Wart.Nothing)
+Compile / scalacOptions --= Seq("-Xfatal-warnings")
+
+Compile / compile / wartremoverWarnings ++= Warts.allBut(Wart.StringPlusAny, Wart.Throw, Wart.Nothing)
 
 // scalafix semanticdb
 semanticdbEnabled := true
