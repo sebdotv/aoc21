@@ -1,3 +1,4 @@
+import aoc._
 import cats.Eq
 import cats.implicits._
 
@@ -16,6 +17,7 @@ object d05 {
     def parse(s: String): Coord =
       s.split(",").map(_.toInt) match {
         case Array(x, y) => Coord(x, y)
+        case other       => throw new IllegalArgumentException(s"Invalid coord: ${other.toList}")
       }
     implicit val eqCoord: Eq[Coord] = Eq.fromUniversalEquals
   }
@@ -66,10 +68,11 @@ object d05 {
   def parse(input: List[String], withDiagonals: Boolean): MutableGrid = {
     val vents = input.map(_.split(" -> ").map(Coord.parse) match {
       case Array(start, end) => start -> end
+      case other             => throw new IllegalArgumentException(s"Invalid vent: ${other.toList}")
     })
     val (starts, ends) = vents.unzip
     val allCoords = starts ++ ends
-    val grid = new MutableGrid(w = allCoords.map(_.x).max + 1, h = allCoords.map(_.y).max + 1)
+    val grid = new MutableGrid(w = allCoords.map(_.x).maxOption.unsafeGet() + 1, h = allCoords.map(_.y).maxOption.unsafeGet() + 1)
     vents.foreach { case (start, end) =>
       grid.addVent(start, end, withDiagonals = withDiagonals)
     }
