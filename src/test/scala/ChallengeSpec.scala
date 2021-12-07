@@ -156,15 +156,31 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     import d07._
     // example
     val exampleData = List(16, 1, 2, 0, 4, 2, 7, 1, 2, 14)
-    val example = Puzzle(exampleData, part1FuelFn)
-    example.fuelNeededTo(2) mustBe 37
-    example.fuelNeededTo(1) mustBe 41
-    example.fuelNeededTo(3) mustBe 39
-    example.fuelNeededTo(10) mustBe 71
-    example.bruteForceBest mustBe Target(pos = 2, fuel = 37)
+    val example1 = Puzzle(exampleData, part1FuelFn)
+    example1.fuelNeededTo(2) mustBe 37
+    example1.fuelNeededTo(1) mustBe 41
+    example1.fuelNeededTo(3) mustBe 39
+    example1.fuelNeededTo(10) mustBe 71
+    example1.bruteForceBest mustBe Target(pos = 2, fuel = 37)
     // input
     val inputData = unsafeLoadLine("input/07.txt").split(",").map(_.toInt).toList
-    val input = Puzzle(inputData, part1FuelFn)
-    input.bruteForceBest mustBe Target(pos = 343, fuel = 353800)
+    val input1 = Puzzle(inputData, part1FuelFn)
+    input1.bruteForceBest mustBe Target(pos = 343, fuel = 353800)
+    // part 2
+    part2FuelFn(16, 5) mustBe 66
+    part2FuelFn(1, 5) mustBe 10
+    part2FuelFn(2, 5) mustBe 6
+    part2FuelFn(0, 5) mustBe 15
+    part2FuelFn(4, 5) mustBe 1
+    part2FuelFn(2, 5) mustBe 6
+    part2FuelFn(7, 5) mustBe 3
+    part2FuelFn(1, 5) mustBe 10
+    part2FuelFn(2, 5) mustBe 6
+    part2FuelFn(14, 5) mustBe 45
+    val example2 = Puzzle(exampleData, part2FuelFn)
+    example2.fuelNeededTo(5) mustBe 168
+    example2.fuelNeededTo(2) mustBe 206
+    val input2 = Puzzle(inputData, part2FuelFn)
+    input2.bruteForceBest mustBe Target(pos = 480, fuel = 98119739)
   }
 }
