@@ -31,7 +31,4 @@ object d07 {
     (dist + 1) * dist / 2
   }
   val part2FuelFn: FuelFn = part2FuelFnFast
-
-  def center(positions: List[Int]): Int =
-    positions.sum / positions.size
 }
