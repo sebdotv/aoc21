@@ -16,7 +16,7 @@ object d07 {
   }
 
   val part1FuelFn: FuelFn = (a, b) => Math.abs(b - a)
-  private val part2FuelFnSlow: FuelFn = (a, b) =>
+  val part2FuelFnSlow: FuelFn = (a, b) =>
     if (a === b) 0
     else {
       val sign = (b - a) / Math.abs(b - a)
@@ -26,7 +26,7 @@ object d07 {
         else it(curr + sign, acc + step, step + 1)
       it(a, 0, 1)
     }
-  private val part2FuelFnFast: FuelFn = (a, b) => {
+  val part2FuelFnFast: FuelFn = (a, b) => {
     val dist = Math.abs(b - a)
     (dist + 1) * dist / 2
   }
