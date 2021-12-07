@@ -151,4 +151,20 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     example.skipDays(256).indivCount mustBe 26984457539L
     input.skipDays(256).indivCount mustBe 1653250886439L
   }
+
+  it should "do d07" in {
+    import d07._
+    // example
+    val exampleData = List(16, 1, 2, 0, 4, 2, 7, 1, 2, 14)
+    val example = Puzzle(exampleData, part1FuelFn)
+    example.fuelNeededTo(2) mustBe 37
+    example.fuelNeededTo(1) mustBe 41
+    example.fuelNeededTo(3) mustBe 39
+    example.fuelNeededTo(10) mustBe 71
+    example.bruteForceBest mustBe Target(pos = 2, fuel = 37)
+    // input
+    val inputData = unsafeLoadLine("input/07.txt").split(",").map(_.toInt).toList
+    val input = Puzzle(inputData, part1FuelFn)
+    input.bruteForceBest mustBe Target(pos = 343, fuel = 353800)
+  }
 }
