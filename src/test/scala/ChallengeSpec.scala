@@ -186,7 +186,8 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
 
   it should "do d08" in {
     import d08._
-    val example = List(
+    val example1 = Entry.parse("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf")
+    val example2 = List(
       "be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe",
       "edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc",
       "fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg",
@@ -198,10 +199,14 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
       "egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb",
       "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"
     ).map(Entry.parse)
-    countEasy(example) mustBe 26
+    countEasy(example2) mustBe 26
     // input
     val input = unsafeLoad("input/08.txt").map(Entry.parse)
     countEasy(input) mustBe 237
-
+    // part 2
+    solve(example1) mustBe 5353
+    example2.map(solve) mustBe List(8394, 9781, 1197, 9361, 4873, 8418, 4548, 1625, 8717, 4315)
+    part2(example2) mustBe 61229
+    part2(input) mustBe 1009098
   }
 }
