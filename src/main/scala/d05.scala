@@ -15,9 +15,9 @@ object d05 {
   }
   object Coord {
     def parse(s: String): Coord =
-      s.split(",").map(_.toInt) match {
-        case Array(x, y) => Coord(x, y)
-        case other       => throw new IllegalArgumentException(s"Invalid coord: ${other.toList}")
+      s.split(",").map(_.toInt).toList match {
+        case List(x, y) => Coord(x, y)
+        case other      => throw new IllegalArgumentException(s"Invalid coord: $other}")
       }
     implicit val eqCoord: Eq[Coord] = Eq.fromUniversalEquals
   }
@@ -66,9 +66,9 @@ object d05 {
   }
 
   def parse(input: List[String], withDiagonals: Boolean): MutableGrid = {
-    val vents = input.map(_.split(" -> ").map(Coord.parse) match {
-      case Array(start, end) => start -> end
-      case other             => throw new IllegalArgumentException(s"Invalid vent: ${other.toList}")
+    val vents = input.map(_.split(" -> ").map(Coord.parse).toList match {
+      case List(start, end) => start -> end
+      case other            => throw new IllegalArgumentException(s"Invalid vent: $other")
     })
     val (starts, ends) = vents.unzip
     val allCoords = starts ++ ends

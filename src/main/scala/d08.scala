@@ -31,7 +31,7 @@ object d08 {
   }
   object Entry {
     def parse(s: String): Entry = {
-      val Array(patterns, outputs) = s.split(""" \| """).map(_.split(" ").toList)
+      val List(patterns, outputs) = s.split(""" \| """).map(_.split(" ").toList).toList
       Entry(patterns, outputs)
     }
   }

@@ -15,8 +15,8 @@ object d02 {
   final case class Cmd(dir: Dir, x: Int)
   object Cmd {
     def parse(s: String): Either[String, Cmd] =
-      s.split(" ") match {
-        case Array(d, v) =>
+      s.split(" ").toList match {
+        case List(d, v) =>
           Right(
             Cmd(
               d match {
