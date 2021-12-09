@@ -66,7 +66,7 @@ object d08 {
         candidates(offset) = false
         getRemaining(c) match {
           case Seq(p) =>
-            // remove p from others
+            // remove p from others - this is actually not required to solve today's problem
             for (otherC <- 0 until 7 if otherC =!= c) {
               remove(otherC, p)
             }
@@ -97,7 +97,7 @@ object d08 {
     solver.mark(entry.getUniquePatternWithLength(2), segments(1))
     solver.mark(entry.getUniquePatternWithLength(4), segments(4))
     solver.mark(entry.getUniquePatternWithLength(3), segments(7))
-    solver.mark(entry.getUniquePatternWithLength(7), segments(8)) // useless
+//    solver.mark(entry.getUniquePatternWithLength(7), segments(8)) // useless
     // unique occurrences - standard distribution:
     // (f,9) <= unique
     // (a,8)
