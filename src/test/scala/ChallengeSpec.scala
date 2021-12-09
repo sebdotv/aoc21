@@ -209,4 +209,18 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     part2(example2) mustBe 61229
     part2(input) mustBe 1009098
   }
+
+  it should "do d09" in {
+    import d09._
+    val example = parse("""2199943210
+      |3987894921
+      |9856789892
+      |8767896789
+      |9899965678""".stripMargin.splitLines)
+    example.lowPoints.map(example.get) mustBe List(1, 0, 5, 5)
+    totalRiskLevel(example) mustBe 15
+    // input
+    val input = parse(unsafeLoad("input/09.txt"))
+    totalRiskLevel(input) mustBe 436
+  }
 }
