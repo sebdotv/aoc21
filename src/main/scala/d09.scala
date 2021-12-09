@@ -31,4 +31,49 @@ object d09 {
 
   def totalRiskLevel(heightmap: Heightmap): Int =
     heightmap.lowPoints.map(heightmap.get(_) + 1).sum
+
+  private def computeBasins(hm: Heightmap): Vector[Option[Coord]] = {
+    sealed trait Cell
+    case object NotComputed extends Cell
+    case object NoBasin extends Cell
+    case class Basin(c: Coord) extends Cell
+
+    val cells: Array[Cell] = Array.fill(hm.w * hm.h)(NotComputed)
+
+    def computeCell(c: Coord): Cell = {
+      val ofs = c.x + c.y * hm.w
+      cells(ofs) match {
+        case NotComputed =>
+          val cell = hm.get(c) match {
+            case 9 => NoBasin
+            case _ =>
+              hm.adjacentLocations(c).minByOption(hm.get).filter(hm.get(_) < hm.get(c)) match {
+                case Some(downward) => computeCell(downward)
+                case None           => Basin(c)
+              }
+          }
+          cells(ofs) = cell
+          cell
+        case computed => computed
+      }
+    }
+
+    for (y <- 0 until hm.h; x <- 0 until hm.w) {
+      computeCell(Coord(x, y))
+    }
+
+    cells.map {
+      case NotComputed => throw new IllegalStateException("Not computed")
+      case NoBasin     => None
+      case Basin(c)    => Some(c)
+    }.toVector
+  }
+
+  def sortedBasinSizes(hm: Heightmap): List[Int] = {
+    val basins = computeBasins(hm)
+    basins.groupBy(identity).collect { case (Some(_), list) => list.length }.toList.sorted
+  }
+
+  def part2(hm: Heightmap): Int =
+    sortedBasinSizes(hm).takeRight(3).product
 }

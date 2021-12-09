@@ -222,5 +222,9 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = parse(unsafeLoad("input/09.txt"))
     totalRiskLevel(input) mustBe 436
+    // part 2
+    sortedBasinSizes(example) mustBe List(3, 9, 9, 14)
+    part2(example) mustBe 1134
+    part2(input) mustBe 1317792
   }
 }
