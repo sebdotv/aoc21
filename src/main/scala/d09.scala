@@ -1,6 +1,6 @@
-import cats.implicits._
-
 import aoc._
+import cats.Eval
+import cats.implicits._
 
 object d09 {
   final case class Coord(x: Int, y: Int)
@@ -18,8 +18,10 @@ object d09 {
         if (c.x < w - 1) List(c.copy(x = c.x + 1)) else Nil
       ).flatten
 
+    def coords: Vector[Coord] =
+      (for (y <- 0 until h; x <- 0 until w) yield Coord(x, y)).toVector
+
     lazy val lowPoints: List[Coord] = {
-      val coords = for (y <- 0 until h; x <- 0 until w) yield Coord(x, y)
       coords.filter(c => adjacentLocations(c).forall(get(c) < get(_))).toList
     }
   }
@@ -35,40 +37,32 @@ object d09 {
     heightmap.lowPoints.map(heightmap.get(_) + 1).sum
 
   private def computeBasins(hm: Heightmap): Vector[Option[Coord]] = {
-    sealed trait Cell
-    case object NotComputed extends Cell
-    case object NoBasin extends Cell
-    final case class Basin(c: Coord) extends Cell
+    object MemoizedSolver {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      private var computations: Int = 0
+      private val evals: Vector[Eval[Option[Coord]]] = hm.coords.map(computeCell)
 
-    val cells: Array[Cell] = Array.fill(hm.w * hm.h)(NotComputed)
-
-    def computeCell(c: Coord): Cell = {
-      val ofs = c.x + c.y * hm.w
-      cells(ofs) match {
-        case NotComputed =>
-          val cell = hm.get(c) match {
-            case 9 => NoBasin
+      private def computeCell(c: Coord): Eval[Option[Coord]] =
+        Eval.defer {
+          computations += 1
+          hm.get(c) match {
+            case 9 => Eval.always(None)
             case _ =>
               hm.adjacentLocations(c).minByOption(hm.get).filter(hm.get(_) < hm.get(c)) match {
-                case Some(downward) => computeCell(downward)
-                case None           => Basin(c)
+                case Some(downward) => evals(downward.x + downward.y * hm.w)
+                case None           => Eval.always(Some(c))
               }
           }
-          cells(ofs) = cell
-          cell
-        case computed => computed
+        }.memoize
+
+      def basins: Vector[Option[Coord]] = {
+        val result = evals.map(_.value)
+        println(computations)
+        assert(computations === hm.w * hm.h)
+        result
       }
     }
-
-    for (y <- 0 until hm.h; x <- 0 until hm.w) {
-      computeCell(Coord(x, y))
-    }
-
-    cells.map {
-      case NotComputed => throw new IllegalStateException("Not computed")
-      case NoBasin     => None
-      case Basin(c)    => Some(c)
-    }.toVector
+    MemoizedSolver.basins
   }
 
   def sortedBasinSizes(hm: Heightmap): List[Int] = {
