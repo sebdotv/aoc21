@@ -1,9 +1,7 @@
 import cats.implicits._
 
-import scala.collection.Set
-
 object d08 {
-  val segments = Vector(
+  private val segments = Vector(
     "abcefg", // 0
     "cf", // 1
     "acdeg", // 2
@@ -17,7 +15,7 @@ object d08 {
   )
 
   type Input = List[Entry]
-  case class Entry(patterns: List[String], outputs: List[String]) {
+  final case class Entry(patterns: List[String], outputs: List[String]) {
     assert(patterns.size === 10)
     assert(outputs.size === 4)
     private lazy val patternDistribution: Map[Char, Int] =

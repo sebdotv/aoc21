@@ -1,5 +1,7 @@
 import cats.implicits._
 
+import aoc._
+
 object d09 {
   final case class Coord(x: Int, y: Int)
   final case class Heightmap(w: Int, h: Int, data: Vector[Int]) {
@@ -23,7 +25,7 @@ object d09 {
   }
 
   def parse(input: List[String]): Heightmap = {
-    val w = input.head.length
+    val w = input.headOption.unsafeGet().length
     val h = input.size
     assert(input.forall(_.length === w))
     Heightmap(w = w, h = h, input.flatMap(_.map(_ - '0')).toVector)
@@ -36,7 +38,7 @@ object d09 {
     sealed trait Cell
     case object NotComputed extends Cell
     case object NoBasin extends Cell
-    case class Basin(c: Coord) extends Cell
+    final case class Basin(c: Coord) extends Cell
 
     val cells: Array[Cell] = Array.fill(hm.w * hm.h)(NotComputed)
 
