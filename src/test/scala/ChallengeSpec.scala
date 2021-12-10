@@ -257,9 +257,24 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     val parsed = example.map(parse)
     parsed.count(_.isCorrupted) mustBe 5
     parsed.count(_.isIncomplete) mustBe example.size - 5
-    score(example) mustBe 26397
+    part1(example) mustBe 26397
     // input
     val input = unsafeLoad("input/10.txt")
-    score(input) mustBe 323613
+    part1(input) mustBe 323613
+    // part 2
+    parsed.collect { case Left(Incomplete(missing)) => missing.mkString } mustBe List(
+      "}}]])})]",
+      ")}>]})",
+      "}}>}>))))",
+      "]]}}]}]}>",
+      "])}>"
+    )
+    completionScore("}}]])})]".toList) mustBe 288957
+    completionScore(")}>]})".toList) mustBe 5566
+    completionScore("}}>}>))))".toList) mustBe 1480781
+    completionScore("]]}}]}]}>".toList) mustBe 995444
+    completionScore("])}>".toList) mustBe 294
+    part2(example) mustBe 288957
+    part2(input) mustBe 3103006161L
   }
 }
