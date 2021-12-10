@@ -227,4 +227,39 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     part2(example) mustBe 1134
     part2(input) mustBe 1317792
   }
+
+  it should "do d10" in {
+    import d10._
+    // legal
+    parse("()").left.toOption mustBe None
+    parse("[]").left.toOption mustBe None
+    parse("([])").left.toOption mustBe None
+    parse("{()()()}").left.toOption mustBe None
+    parse("<([{}])>").left.toOption mustBe None
+    parse("[<>({}){}[([])<>]]").left.toOption mustBe None
+    parse("(((((((((())))))))))").left.toOption mustBe None
+    // corrupted
+    parse("(]").isCorrupted mustBe true
+    parse("{()()()>").isCorrupted mustBe true
+    parse("(((()))}").isCorrupted mustBe true
+    parse("<([]){()}[{}])").isCorrupted mustBe true
+    // example
+    val example = """[({(<(())[]>[[{[]{<()<>>
+                    |[(()[<>])]({[<{<<[]>>(
+                    |{([(<{}[<>[]}>{[]{[(<()>
+                    |(((({<>}<{<{<>}{[]{[]{}
+                    |[[<[([]))<([[{}[[()]]]
+                    |[{[{({}]{}}([{[{{{}}([]
+                    |{<[[]]>}<{[{[{[]{()[[[]
+                    |[<(<(<(<{}))><([]([]()
+                    |<{([([[(<>()){}]>(<<{{
+                    |<{([{{}}[<[[[<>{}]]]>[]]""".stripMargin.splitLines
+    val parsed = example.map(parse)
+    parsed.count(_.isCorrupted) mustBe 5
+    parsed.count(_.isIncomplete) mustBe example.size - 5
+    score(example) mustBe 26397
+    // input
+    val input = unsafeLoad("input/10.txt")
+    score(input) mustBe 323613
+  }
 }
