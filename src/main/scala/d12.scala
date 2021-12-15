@@ -28,7 +28,19 @@ object d12 {
       edgesFrom(vertex).map(_ - vertex).map(_.toList).map { case List(b) => b }
 
     def part1: List[Path] =
-      Graph.dfs[Vertex](destinationsFrom(_).toList)((path, v) => v.small && path.contains_(v))(start).map(Path)
+      Graph
+        .dfs[Vertex](destinationsFrom(_).toList) { (path, v) =>
+          v.small && path.contains_(v)
+        }(start)
+        .map(Path)
+
+    def part2: List[Path] =
+      Graph
+        .dfs[Vertex](destinationsFrom(_).toList) { (path, v) =>
+          v === start ||
+          v.small && path.contains_(v) && path.filter(_.small).groupBy(identity).exists(_._2.size > 1)
+        }(start)
+        .map(Path)
   }
   object CaveSystem {
     private val start = Cave("start")

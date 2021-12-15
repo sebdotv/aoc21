@@ -413,5 +413,46 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = parse(unsafeLoad("input/12.txt"))
     input.part1 must have size 4413
+    // part 2
+    example1.part2.map(_.toString) must contain theSameElementsAs
+      """start,A,b,A,b,A,c,A,end
+        |start,A,b,A,b,A,end
+        |start,A,b,A,b,end
+        |start,A,b,A,c,A,b,A,end
+        |start,A,b,A,c,A,b,end
+        |start,A,b,A,c,A,c,A,end
+        |start,A,b,A,c,A,end
+        |start,A,b,A,end
+        |start,A,b,d,b,A,c,A,end
+        |start,A,b,d,b,A,end
+        |start,A,b,d,b,end
+        |start,A,b,end
+        |start,A,c,A,b,A,b,A,end
+        |start,A,c,A,b,A,b,end
+        |start,A,c,A,b,A,c,A,end
+        |start,A,c,A,b,A,end
+        |start,A,c,A,b,d,b,A,end
+        |start,A,c,A,b,d,b,end
+        |start,A,c,A,b,end
+        |start,A,c,A,c,A,b,A,end
+        |start,A,c,A,c,A,b,end
+        |start,A,c,A,c,A,end
+        |start,A,c,A,end
+        |start,A,end
+        |start,b,A,b,A,c,A,end
+        |start,b,A,b,A,end
+        |start,b,A,b,end
+        |start,b,A,c,A,b,A,end
+        |start,b,A,c,A,b,end
+        |start,b,A,c,A,c,A,end
+        |start,b,A,c,A,end
+        |start,b,A,end
+        |start,b,d,b,A,c,A,end
+        |start,b,d,b,A,end
+        |start,b,d,b,end
+        |start,b,end""".stripMargin.splitLines
+    example2.part2 must have size 103
+    example3.part2 must have size 3509
+    input.part2 must have size 118803
   }
 }
