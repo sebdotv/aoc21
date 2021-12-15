@@ -1,7 +1,9 @@
 package aoc
 
+import cats.data.NonEmptyList
+
 object Graph {
-  type Path[V] = List[V]
+  type Path[V] = NonEmptyList[V]
   type Paths[V] = List[Path[V]]
 
   def dfs[V](edgesF: V => List[V])(visitedF: (Path[V], V) => Boolean)(start: V): Paths[V] = {
@@ -10,6 +12,6 @@ object Graph {
         case Nil   => path :: results
         case edges => edges.filterNot(visitedF(path, _)).foldLeft(results)((b, next) => it(next :: path, b))
       }
-    it(start :: Nil, Nil).map(_.reverse)
+    it(NonEmptyList.one(start), Nil).map(_.reverse)
   }
 }

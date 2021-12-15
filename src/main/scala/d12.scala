@@ -1,21 +1,22 @@
 import aoc._
 import cats._
+import cats.data._
 import cats.implicits._
 
 object d12 {
   type Vertex = Cave
   type Edge = Set[Vertex]
-  case class Path(path: List[Vertex]) {
-    override def toString: String = path.mkString(",")
+  final case class Path(path: NonEmptyList[Vertex]) {
+    override def toString: String = path.toList.mkString(",")
   }
 
   implicit val eqCave: Eq[Cave] = Eq.fromUniversalEquals
-  case class Cave(name: String) {
+  final case class Cave(name: String) {
     def small: Boolean = name(0).isLower
     override def toString: String = name
   }
 
-  case class CaveSystem(edges: Set[Edge]) {
+  final case class CaveSystem(edges: Set[Edge]) {
     import CaveSystem._
     val vertices: Set[Vertex] = edges.flatten
     assert(vertices.contains(start))
