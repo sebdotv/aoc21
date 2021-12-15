@@ -1,10 +1,11 @@
 import aoc._
 import cats.implicits._
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 object d11 {
-  case class Grid(h: Int, w: Int, energyLevels: Vector[Int], totalFlashes: Int) {
+  case class Grid(h: Int, w: Int, energyLevels: Vector[Int], totalFlashes: Int, steps: Int) {
     assert(energyLevels.size === h * w)
 
     def step(n: Int): Grid =
@@ -39,7 +40,7 @@ object d11 {
 
       flashed.foreach(set(_)(0))
 
-      copy(energyLevels = data.toVector, totalFlashes = totalFlashes + flashed.size)
+      copy(energyLevels = data.toVector, totalFlashes = totalFlashes + flashed.size, steps = steps + 1)
     }
 
     def toStrLines: List[String] =
@@ -73,6 +74,13 @@ object d11 {
   def parseGrid(input: List[String]): Grid = {
     val w = input.headOption.unsafeGet().length
     assert(input.forall(_.length === w))
-    Grid(w, input.size, input.flatten.map(_ - '0').toVector, 0)
+    Grid(w, input.size, input.flatten.map(_ - '0').toVector, totalFlashes = 0, steps = 0)
+  }
+
+  @tailrec
+  def firstSimultaneousFlashStep(input: Grid): Int = {
+    val next = input.step
+    if (next.energyLevels.forall(_ === 0)) next.steps
+    else firstSimultaneousFlashStep(next)
   }
 }

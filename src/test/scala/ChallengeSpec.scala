@@ -333,5 +333,8 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = parseGrid(unsafeLoad("input/11.txt"))
     input.step(100).totalFlashes mustBe 1661
+    // part 2
+    firstSimultaneousFlashStep(example) mustBe 195
+    firstSimultaneousFlashStep(input) mustBe 334
   }
 }
