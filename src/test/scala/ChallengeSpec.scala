@@ -337,4 +337,81 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     firstSimultaneousFlashStep(example) mustBe 195
     firstSimultaneousFlashStep(input) mustBe 334
   }
+
+  it should "do d12" in {
+    import d12._
+    // examples
+    val example1 = parse("""start-A
+                          |start-b
+                          |A-c
+                          |A-b
+                          |b-d
+                          |A-end
+                          |b-end""".stripMargin.splitLines)
+    example1.vertices must have size 6
+    example1.edges must have size 7
+    example1.part1.map(_.toString) must contain theSameElementsAs
+      """start,A,b,A,c,A,end
+        |start,A,b,A,end
+        |start,A,b,end
+        |start,A,c,A,b,A,end
+        |start,A,c,A,b,end
+        |start,A,c,A,end
+        |start,A,end
+        |start,b,A,c,A,end
+        |start,b,A,end
+        |start,b,end""".stripMargin.splitLines
+    val example2 = parse("""dc-end
+                           |HN-start
+                           |start-kj
+                           |dc-start
+                           |dc-HN
+                           |LN-dc
+                           |HN-end
+                           |kj-sa
+                           |kj-HN
+                           |kj-dc""".stripMargin.splitLines)
+    example2.part1.map(_.toString) must contain theSameElementsAs
+      """start,HN,dc,HN,end
+        |start,HN,dc,HN,kj,HN,end
+        |start,HN,dc,end
+        |start,HN,dc,kj,HN,end
+        |start,HN,end
+        |start,HN,kj,HN,dc,HN,end
+        |start,HN,kj,HN,dc,end
+        |start,HN,kj,HN,end
+        |start,HN,kj,dc,HN,end
+        |start,HN,kj,dc,end
+        |start,dc,HN,end
+        |start,dc,HN,kj,HN,end
+        |start,dc,end
+        |start,dc,kj,HN,end
+        |start,kj,HN,dc,HN,end
+        |start,kj,HN,dc,end
+        |start,kj,HN,end
+        |start,kj,dc,HN,end
+        |start,kj,dc,end""".stripMargin.splitLines
+    val example3 = parse("""fs-end
+                           |he-DX
+                           |fs-he
+                           |start-DX
+                           |pj-DX
+                           |end-zg
+                           |zg-sl
+                           |zg-pj
+                           |pj-he
+                           |RW-he
+                           |fs-DX
+                           |pj-RW
+                           |zg-RW
+                           |start-pj
+                           |he-WI
+                           |zg-he
+                           |pj-fs
+                           |start-RW""".stripMargin.splitLines)
+    example3.part1 must have size 226
+    // input
+    val input = parse(unsafeLoad("input/12.txt"))
+    input.part1 must have size 4413
+  }
 }
