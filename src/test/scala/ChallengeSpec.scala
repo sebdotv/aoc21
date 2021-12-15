@@ -281,17 +281,17 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   it should "do d11" in {
     import d11._
     val example0 = parseGrid("""11111
-                     |19991
-                     |19191
-                     |19991
-                     |11111""".stripMargin.splitLines)
-    example0.step(1).toString mustBe
+        |19991
+        |19191
+        |19991
+        |11111""".stripMargin.splitLines)
+    example0.nSteps(1).toString mustBe
       """34543
         |40004
         |50005
         |40004
         |34543""".stripMargin
-    example0.step(2).toString mustBe
+    example0.nSteps(2).toString mustBe
       """45654
         |51115
         |61116
@@ -307,7 +307,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |6882881134
         |4846848554
         |5283751526""".stripMargin.splitLines)
-    example.step(1).toString mustBe
+    example.nSteps(1).toString mustBe
       """6594254334
         |3856965822
         |6375667284
@@ -318,7 +318,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |7993992245
         |5957959665
         |6394862637""".stripMargin
-    example.step(100).toString mustBe
+    example.nSteps(100).toString mustBe
       """0397666866
         |0749766918
         |0053976933
@@ -329,10 +329,10 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |9322228966
         |7922286866
         |6789998766""".stripMargin
-    example.step(100).totalFlashes mustBe 1656
+    example.nSteps(100).totalFlashes mustBe 1656
     // input
     val input = parseGrid(unsafeLoad("input/11.txt"))
-    input.step(100).totalFlashes mustBe 1661
+    input.nSteps(100).totalFlashes mustBe 1661
     // part 2
     firstSimultaneousFlashStep(example) mustBe 195
     firstSimultaneousFlashStep(input) mustBe 334
