@@ -26,7 +26,7 @@ object d12 {
       if (vertex === end) Set.empty else edges.filter(_.contains(vertex))
 
     def destinationsFrom(vertex: Vertex): Set[Vertex] =
-      edgesFrom(vertex).map(_ - vertex).map(_.toList).map { case List(b) => b }
+      edgesFrom(vertex).map(_ - vertex).map(_.toList).collect { case List(b) => b }
 
     def part1: List[Path] =
       Graph
