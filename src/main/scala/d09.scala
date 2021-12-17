@@ -57,7 +57,6 @@ object d09 {
 
       def basins: Vector[Option[Coord]] = {
         val result = evals.map(_.value)
-        println(computations)
         assert(computations === hm.w * hm.h)
         result
       }
