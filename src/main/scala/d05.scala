@@ -1,28 +1,13 @@
 import aoc._
-import cats.Eq
+import aoc.trigo._
 import cats.implicits._
 
 import scala.annotation.tailrec
 
 object d05 {
-  import Coord._
-
-  final case class Coord(x: Int, y: Int) {
-    def -(start: Coord): Vect =
-      Vect(start = start, x - start.x, y - start.y)
-    def +(v: Vect): Coord =
-      copy(x = x + v.x, y = y + v.y)
-  }
-  object Coord {
-    def parse(s: String): Coord =
-      s.split(",").map(_.toInt).toList match {
-        case List(x, y) => Coord(x, y)
-        case other      => throw new IllegalArgumentException(s"Invalid coord: $other}")
-      }
-    implicit val eqCoord: Eq[Coord] = Eq.fromUniversalEquals
-  }
-  final case class Vect(start: Coord, x: Int, y: Int) {
-    def dir(withDiagonals: Boolean): Option[Vect] =
+  implicit class VectOps(vect: Vect) {
+    def dir(withDiagonals: Boolean): Option[Vect] = {
+      val Vect(start, x, y) = vect
       if (x > 0 && y === 0) Some(Vect(start, 1, 0))
       else if (x < 0 && y === 0) Some(Vect(start, -1, 0))
       else if (x === 0 && y > 0) Some(Vect(start, 0, 1))
@@ -34,6 +19,7 @@ object d05 {
         else if (x === -y && x < 0) Some(Vect(start, -1, 1))
         else None
       } else None
+    }
   }
 
   class MutableGrid(val w: Int, h: Int) {

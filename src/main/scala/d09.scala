@@ -1,9 +1,9 @@
 import aoc._
+import aoc.trigo._
 import cats.Eval
 import cats.implicits._
 
 object d09 {
-  final case class Coord(x: Int, y: Int)
   final case class Heightmap(w: Int, h: Int, data: Vector[Int]) {
     assert(data.length === w * h)
 
