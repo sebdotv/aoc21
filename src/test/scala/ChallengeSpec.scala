@@ -455,4 +455,58 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     example3.part2 must have size 3509
     input.part2 must have size 118803
   }
+
+  it should "do d13" in {
+    import d13._
+    val example = parse("""
+        |6,10
+        |0,14
+        |9,10
+        |0,3
+        |10,4
+        |4,11
+        |6,0
+        |6,12
+        |4,1
+        |0,13
+        |10,12
+        |3,4
+        |3,0
+        |8,4
+        |1,10
+        |2,14
+        |8,10
+        |9,0
+        |
+        |fold along y=7
+        |fold along x=5""".stripMargin.splitLines)
+    example.fold.unsafeGet().toString mustBe
+      """#.##..#..#.
+        |#...#......
+        |......#...#
+        |#...#......
+        |.#.#..#.###
+        |...........
+        |...........""".stripMargin
+    example.fold.unsafeGet().dots.size mustBe 17
+    example.foldN(2).unsafeGet().toString mustBe
+      """#####
+        |#...#
+        |#...#
+        |#...#
+        |#####
+        |.....
+        |.....""".stripMargin
+    // input
+    val input = parse(unsafeLoad("input/13.txt"))
+    input.fold.unsafeGet().dots.size mustBe 695
+    // part 2
+    input.foldAll.toString mustBe
+      """.##....##.####..##..#....#..#.###....##.
+        |#..#....#....#.#..#.#....#..#.#..#....#.
+        |#.......#...#..#....#....#..#.#..#....#.
+        |#.##....#..#...#.##.#....#..#.###.....#.
+        |#..#.#..#.#....#..#.#....#..#.#....#..#.
+        |.###..##..####..###.####..##..#.....##..""".stripMargin
+  }
 }
