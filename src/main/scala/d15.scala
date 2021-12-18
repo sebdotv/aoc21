@@ -46,15 +46,16 @@ object d15 {
     object CachedSolver {
       private var computations = 0
       val evalMap: Map[Coord, Eval[Int]] = input.coords.map(c => c -> lowestRiskTo(c)).toMap
-      def lowestRiskTo(c: Coord): Eval[Int] = Eval.later {
+      def lowestRiskTo(c: Coord): Eval[Int] = Eval.defer {
         computations += 1
-        (if (c === Coord.zero) 0 else input.riskLevel(c)) +
+        if (c === Coord.zero) Eval.now(0)
+        else
           List(c.copy(x = c.x - 1), c.copy(y = c.y - 1))
             .filter(input.insideBounds)
             .traverse(evalMap)
-            .map(_.minOption.getOrElse(0))
-            .value
-      }
+            .map(_.min)
+            .map(_ + input.riskLevel(c))
+      }.memoize
       def solve: Int = {
         val result = evalMap(input.end).value
         assert(CachedSolver.computations === input.w * input.h)
