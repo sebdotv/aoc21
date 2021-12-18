@@ -509,4 +509,42 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |#..#.#..#.#....#..#.#....#..#.#....#..#.
         |.###..##..####..###.####..##..#.....##..""".stripMargin
   }
+
+  it should "do d14" in {
+    import d14._
+
+    val example = parse("""
+        |NNCB
+        |
+        |CH -> B
+        |HH -> N
+        |CB -> H
+        |NH -> C
+        |HB -> C
+        |HC -> B
+        |HN -> C
+        |NN -> C
+        |BH -> H
+        |NC -> B
+        |NB -> B
+        |BN -> B
+        |BB -> N
+        |BC -> B
+        |CC -> N
+        |CN -> C""".stripMargin.splitLines)
+    example.stepN(1).polymer.mkString mustBe "NCNBCHB"
+    example.stepN(2).polymer.mkString mustBe "NBCCNBBBCBHCB"
+    example.stepN(3).polymer.mkString mustBe "NBBBCNCCNBBNBNBBCHBHHBCHB"
+    example.stepN(4).polymer.mkString mustBe "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB"
+    example.stepN(5).polymer.size mustBe 97
+    example.stepN(10).polymer.size mustBe 3073
+    example.stepN(10).elementCounts mustBe Map('B' -> 1749, 'C' -> 298, 'H' -> 161, 'N' -> 865)
+    example.stepN(10).maxMinusMin mustBe 1588
+    // input
+    val input = parse(unsafeLoad("input/14.txt"))
+    input.stepN(10).maxMinusMin mustBe 3143
+    // part 2
+    input.fast.stepN(10).maxMinusMin mustBe 3143
+    input.fast.stepN(40).maxMinusMin mustBe 4110215602456L
+  }
 }
