@@ -512,7 +512,6 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
 
   it should "do d14" in {
     import d14._
-
     val example = parse("""
         |NNCB
         |
@@ -546,5 +545,26 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // part 2
     input.fast.stepN(10).maxMinusMin mustBe 3143
     input.fast.stepN(40).maxMinusMin mustBe 4110215602456L
+  }
+
+  it should "do d15" in {
+    import d15._
+    // example
+    val example = parse("""
+      |1163751742
+      |1381373672
+      |2136511328
+      |3694931569
+      |7463417111
+      |1319128137
+      |1359912421
+      |3125421639
+      |1293138521
+      |2311944581""".stripMargin.splitLines)
+    part1Slow(example) mustBe 40
+    part1(example) mustBe 40
+    // input
+    val input = parse(unsafeLoad("input/15.txt"))
+    part1(input) mustBe 523
   }
 }

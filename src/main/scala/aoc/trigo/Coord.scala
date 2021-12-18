@@ -11,6 +11,8 @@ final case class Coord(x: Int, y: Int) {
     Coord(x = x + v.x, y = y + v.y)
 }
 object Coord {
+  val zero: Coord = Coord(0, 0)
+
   implicit val eqCoord: Eq[Coord] = Eq.fromUniversalEquals
 
   def parse(s: String): Coord =
