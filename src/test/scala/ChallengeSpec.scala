@@ -567,7 +567,51 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     val input = parse(unsafeLoad("input/15.txt"))
     solve(input) mustBe 523
     // part 2
-    solve(growForPart2(example)) mustBe 315
-    solve(growForPart2(input)) mustBe 1234
+    val (exampleSum, exampleSteps) = rawSolve(growForPart2(example))
+    exampleSum mustBe 315
+    val expected = """
+      |112371131222
+      |324
+      |15
+      |4
+      |1
+      |1123532
+      |1
+      |2342
+      |332
+      |1
+      |61
+      |44
+      |4
+      |1
+      |2461
+      |4
+      |3
+      |4564
+      |554
+      |3163
+      |28
+      |125
+      |6413
+      |7
+      |26
+      |21
+      |7
+      |6112
+      |541
+      |34725
+      |32
+      |24
+      |1431
+      |2
+      |33479""".stripMargin.splitLines.flatten.mkString
+    val fullInput = growForPart2(input)
+    println(fullInput)
+    //    exampleSteps.take(expected.size).mkString mustBe expected
+//    solve(growForPart2(input)) mustBe 1234
+    val (x, steps) = rawSolve(fullInput)
+    println(steps.mkString)
+    x mustBe 12345
+
   }
 }

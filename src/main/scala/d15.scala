@@ -42,27 +42,34 @@ object d15 {
     paths.map(p => p -> totalRisk(p)).minBy(_._2)._2
   }
 
-  def solve(input: CaveMap): Int = {
+  def solve(input: CaveMap): Int =
+    rawSolve(input)._1
+
+  type R = (Int, List[Coord])
+  def rawSolve(input: CaveMap): (Int, List[Coord]) = {
     object CachedSolver {
       private var computations = 0
-      val evalMap: Map[Coord, Eval[Int]] = input.coords.map(c => c -> lowestRiskTo(c)).toMap
-      def lowestRiskTo(c: Coord): Eval[Int] = Eval.defer {
+      val evalMap: Map[Coord, Eval[R]] = input.coords.map(c => c -> lowestRiskTo(c)).toMap
+      def lowestRiskTo(c: Coord): Eval[R] = Eval.defer {
         computations += 1
-        if (c === Coord.zero) Eval.now(0)
+        if (c === input.start) Eval.now((0, List(c)))
         else
           List(c.copy(x = c.x - 1), c.copy(y = c.y - 1))
             .filter(input.insideBounds)
             .traverse(evalMap)
-            .map(_.min)
-            .map(_ + input.riskLevel(c))
+            .map(_.minBy(_._1))
+            .map { case (min, acc) =>
+              (min + input.riskLevel(c), c :: acc)
+            }
       }.memoize
-      def solve: Int = {
+      def solve: R = {
         val result = evalMap(input.end).value
         assert(CachedSolver.computations === input.w * input.h)
         result
       }
     }
-    CachedSolver.solve
+    val (solution, steps) = CachedSolver.solve
+    (solution, steps.reverse)
   }
 
   def growForPart2(input: CaveMap): CaveMap =
