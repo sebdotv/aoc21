@@ -8,7 +8,7 @@ object Graph {
   type Path[V] = NonEmptyList[V]
   type Paths[V] = List[Path[V]]
   type NeighborsFunction[V] = V => List[V]
-  type WeightFunction[V, W] = (V, V) => W
+  type LengthFunction[V, W] = (V, V) => W
   type VisitedFunction[V] = (Path[V], V) => Boolean
   type HeuristicFunction[V, W] = V => W
   object VisitedFunction {
@@ -28,7 +28,7 @@ object Graph {
   // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
   def aStar[V: Eq](
       neighborsF: NeighborsFunction[V]
-  )(weightF: WeightFunction[V, Double])(heuristicF: HeuristicFunction[V, Double])(start: V, goal: V): Path[V] = {
+  )(weightF: LengthFunction[V, Double])(heuristicF: HeuristicFunction[V, Double])(start: V, goal: V): Path[V] = {
     import collection.mutable
 
     // The set of discovered nodes that may need to be (re-)expanded.
@@ -81,5 +81,59 @@ object Graph {
     }
     // Open set is empty but goal was never reached
     throw new RuntimeException("Failure")
+  }
+
+  def dijkstra[V](neighborsF: NeighborsFunction[V])(lengthF: LengthFunction[V, Int])(vertices: List[V], source: V) = {
+    import collection.mutable
+
+    val dist = mutable.Map.empty[V, Int]
+    val prev = mutable.Map.empty[V, Option[V]]
+//    implicit val orderingV: Ordering[V] = Ordering.fromLessThan()
+//    val pq = mutable.PriorityQueue.empty[V]
+    val q = mutable.Set.empty[V]
+
+    vertices.foreach { v =>
+      dist(v) = Int.MaxValue
+      prev(v) = None
+      q.add(v)
+    }
+    dist(source) = 0
+
+    while (q.nonEmpty) {
+      val u = q.minBy(dist)
+      q.remove(u)
+      for (v <- neighborsF(u) if q.contains(v)) {
+        val alt = if (dist(u) === Int.MaxValue) Int.MaxValue else (dist(u) + lengthF(u, v))
+        if (alt < dist(v)) {
+          dist(v) = alt
+          prev(v) = Some(u)
+        }
+      }
+    }
+
+    (dist.toMap, prev.toMap)
+
+    // 1  function Dijkstra(Graph, source):
+    // 2
+    // 3      create vertex set Q
+    // 4
+    // 5      for each vertex v in Graph:
+    // 6          dist[v] ← INFINITY
+    // 7          prev[v] ← UNDEFINED
+    // 8          add v to Q
+    // 9      dist[source] ← 0
+    // 10
+    // 11      while Q is not empty:
+    // 12          u ← vertex in Q with min dist[u]
+    // 13
+    // 14          remove u from Q
+    // 15
+    // 16          for each neighbor v of u still in Q:
+    // 17              alt ← dist[u] + length(u, v)
+    // 18              if alt < dist[v]:
+    // 19                  dist[v] ← alt
+    // 20                  prev[v] ← u
+    // 21
+    // 22      return dist[], prev[]
   }
 }

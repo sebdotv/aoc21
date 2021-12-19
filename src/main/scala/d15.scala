@@ -72,13 +72,20 @@ object d15 {
     rawSolve(input)._1
   }
 
-  def solve(input: CaveMap): Int = {
+  def solveIncorrectAStar(input: CaveMap): Int = {
     val path =
       aStar(input.neighbors)((_, to) => input.riskLevel(to))(c => (input.end - c).norm)(
         input.start,
         input.end
       )
     path.toList.drop(1).map(input.riskLevel).sum
+  }
+
+  def solve(input: CaveMap): Int = {
+    val (dist, prev) = dijkstra(input.neighbors)((_, to) => input.riskLevel(to))(input.coords, input.start)
+//    println(dist)
+//    println(prev)
+    dist(input.end)
   }
 
   def growForPart2(input: CaveMap): CaveMap =
