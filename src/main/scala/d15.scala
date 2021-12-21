@@ -23,11 +23,17 @@ object d15 {
     def riskLevel(c: Coord): Int =
       riskLevels(c.x + c.y * w)
 
-    def toStrLines: List[String] =
+    def toStrLines(solution: Set[Coord]): List[String] = {
+      import io.AnsiColor._
       (0 until h).map { y =>
-        (0 until w).map(x => riskLevel(Coord(x, y))).mkString
+        (0 until w).map { x =>
+          val c = Coord(x, y)
+          if (solution.contains(c)) s"$RED${riskLevel(c)}$RESET" else riskLevel(c).toString
+        }.mkString
       }.toList
-    override def toString: String = toStrLines.mkString("\n")
+    }
+    def toString(solution: Set[Coord]): String = toStrLines(solution).mkString("\n")
+    override def toString: String = toString(solution = Set.empty)
   }
 
   def parse(input: List[String]): CaveMap = {

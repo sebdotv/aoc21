@@ -29,7 +29,10 @@ object Graph {
     it(NonEmptyList.one(start), Nil).map(_.reverse)
   }
 
-  // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
+  /** A* from Wikipedia (https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode)
+    * @param heuristicF
+    *   must never over-estimate the distance
+    */
   def aStarSlow[V: Eq](
       neighborsF: NeighborsFunction[V]
   )(weightF: WeightFunction[V, Double])(heuristicF: WeightFunction[V, Double])(start: V, goal: V): Path[V] = {
@@ -87,6 +90,10 @@ object Graph {
     throw new RuntimeException("Failure")
   }
 
+  /** A* using jgrapht
+    * @param heuristicF
+    *   must never over-estimate the distance
+    */
   def aStar[V: Eq](
       neighborsF: NeighborsFunction[V]
   )(weightF: WeightFunction[V, Double])(heuristicF: WeightFunction[V, Double])(vertices: List[V], start: V, goal: V): Path[V] = {
