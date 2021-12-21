@@ -562,7 +562,6 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
       |3125421639
       |1293138521
       |2311944581""".stripMargin.splitLines)
-    solveSlow(example) mustBe 40
     solve(example) mustBe 40
     // input
     val input = parse(unsafeLoad("input/15.txt"))
