@@ -89,7 +89,7 @@ object Graph {
 
   def aStar[V: Eq](
       neighborsF: NeighborsFunction[V]
-  )(weightF: WeightFunction[V, Double])(heuristicF: WeightFunction[V, Double])(vertices: List[V])(start: V, goal: V): Path[V] = {
+  )(weightF: WeightFunction[V, Double])(heuristicF: WeightFunction[V, Double])(vertices: List[V], start: V, goal: V): Path[V] = {
     val graph = new SimpleDirectedWeightedGraph[V, DefaultWeightedEdge](classOf[DefaultWeightedEdge])
     for (v <- vertices) {
       graph.addVertex(v)

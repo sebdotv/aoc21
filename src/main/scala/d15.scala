@@ -3,9 +3,6 @@ import aoc._
 import aoc.trigo.Coord
 import cats.Eval
 import cats.implicits._
-import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic
-import org.jgrapht.alg.shortestpath.AStarShortestPath
-import org.jgrapht.graph.{DefaultWeightedEdge, SimpleDirectedWeightedGraph}
 
 object d15 {
   final case class CaveMap(w: Int, h: Int, riskLevels: Vector[Int]) {
@@ -75,40 +72,26 @@ object d15 {
     rawSolve(input)._1
   }
 
-  def solveIncorrectAStar(input: CaveMap): Int = {
+  def solveAStarSlow(input: CaveMap): Int = {
     val path =
-      aStar(input.neighbors)((_, to) => input.riskLevel(to))(c => (input.end - c).manhattanDistance)(
+      aStarSlow(input.neighbors)((_, to) => input.riskLevel(to))((a, b) => (b - a).manhattanDistance)(
         input.start,
         input.end
       )
     path.toList.drop(1).map(input.riskLevel).sum
   }
 
-  def solveProperAStar(input: CaveMap): Int = {
-    val graph = new SimpleDirectedWeightedGraph[Coord, DefaultWeightedEdge](classOf[DefaultWeightedEdge])
-    for (v <- input.coords) {
-      graph.addVertex(v)
-    }
-    for (v <- input.coords) {
-      for (n <- input.neighbors(v)) {
-        graph.addEdge(v, n)
-        graph.setEdgeWeight(v, n, input.riskLevel(n))
-      }
-    }
-    val admissibleHeuristic = new AStarAdmissibleHeuristic[Coord] {
-      override def getCostEstimate(sourceVertex: Coord, targetVertex: Coord): Double =
-        (targetVertex - sourceVertex).manhattanDistance
-    }
-    val algo = new AStarShortestPath(graph, admissibleHeuristic)
-    val path0 = algo.getPath(input.start, input.end)
-//    val path = path0.getVertexList.asScala
-//    println(path)
-//    println(path.map(input.riskLevel))
-//    println(path.drop(1).map(input.riskLevel).sum)
-    path0.getWeight.toInt
+  def solveAStar(input: CaveMap): Int = {
+    val path =
+      aStar(input.neighbors)((_, to) => input.riskLevel(to))((a, b) => (b - a).manhattanDistance)(
+        input.coords,
+        input.start,
+        input.end
+      )
+    path.toList.drop(1).map(input.riskLevel).sum
   }
 
-  def solve(input: CaveMap): Int = {
+  def solveDijkstraKO(input: CaveMap): Int = {
     val (dist, prev) = dijkstra(input.neighbors)((_, to) => input.riskLevel(to))(input.coords, input.start)
 //    println(dist)
 //    println(prev)

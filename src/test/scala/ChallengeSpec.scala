@@ -549,7 +549,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
 
   it should "do d15" in {
     import d15._
-    val solve = solveProperAStar _
+    val solve = solveAStar _
     // example
     val example = parse("""
       |1163751742
