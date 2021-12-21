@@ -13,7 +13,7 @@ semanticdbEnabled := true
 semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
 
-libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.0"
+libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.1"
 libraryDependencies += "org.typelevel" %% "cats-time" % "0.5.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test"
 
