@@ -74,7 +74,7 @@ object d15 {
 
   def solveIncorrectAStar(input: CaveMap): Int = {
     val path =
-      aStar(input.neighbors)((_, to) => input.riskLevel(to))(c => (input.end - c).norm)(
+      aStar(input.neighbors)((_, to) => input.riskLevel(to))(c => (input.end - c).manhattanDistance)(
         input.start,
         input.end
       )
