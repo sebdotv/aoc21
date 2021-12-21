@@ -18,7 +18,7 @@ object d15 {
       c.x >= 0 && c.x < w && c.y >= 0 && c.y < h
 
     def neighbors(c: Coord): List[Coord] =
-      List(c.copy(x = c.x + 1), c.copy(y = c.y + 1)).filter(insideBounds)
+      List(c.copy(x = c.x - 1), c.copy(x = c.x + 1), c.copy(y = c.y - 1), c.copy(y = c.y + 1)).filter(insideBounds)
 
     def riskLevel(c: Coord): Int =
       riskLevels(c.x + c.y * w)
