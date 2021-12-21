@@ -568,6 +568,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     solve(input) mustBe 523
     // part 2
     solve(growForPart2(example)) mustBe 315
-    solve(growForPart2(input)) mustBe 2876
+    val fullInput = growForPart2(input)
+    time(solve(fullInput)) mustBe 2876
   }
 }
