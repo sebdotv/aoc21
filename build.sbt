@@ -16,3 +16,5 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.0"
 libraryDependencies += "org.typelevel" %% "cats-time" % "0.5.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test"
+
+libraryDependencies += "org.jgrapht" % "jgrapht-core" % "1.5.1"
