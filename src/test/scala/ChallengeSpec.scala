@@ -1,10 +1,9 @@
 import TestUtils._
 import aoc._
 import cats.data.NonEmptyList
+import org.scalatest.Inside._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
-
-import scala.collection.BitSet
 
 class ChallengeSpec extends AnyFlatSpec with Matchers {
   "lazy coder" should "do d01" in {
@@ -575,8 +574,23 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   }
   it should "do d16" in {
     import d16._
-    rawDecode("D2FE28") mustBe Packet(6, 4, Bits.fromBinary("101111111000101000"))
-    decode("D2FE28") mustBe LiteralValue(2021)
-    decode("38006F45291200") mustBe Operator(List(LiteralValue(10), LiteralValue(20)))
+    parsePacket("D2FE28") mustBe Packet(6, 4, LiteralValuePacketData(2021))
+    inside(parsePacket("38006F45291200")) { packet =>
+      packet.version mustBe 1
+      packet.typeID mustBe 6
+      inside(packet.data) { case OperatorPacketData(subPackets) =>
+        subPackets.map(_.data) mustBe List(LiteralValuePacketData(10), LiteralValuePacketData(20))
+      }
+    }
+    inside(parsePacket("EE00D40C823060")) { packet =>
+      packet.version mustBe 7
+      packet.typeID mustBe 3
+      inside(packet.data) { case OperatorPacketData(subPackets) =>
+        subPackets.map(_.data) mustBe List(LiteralValuePacketData(1), LiteralValuePacketData(2), LiteralValuePacketData(3))
+      }
+    }
+    inside(parseNode("8A004A801A8002F478")) { case n @ Operator(4, List(Operator(1, List(Operator(5, List(LiteralValue(6, _))))))) =>
+      n.versionSum mustBe 16
+    }
   }
 }
