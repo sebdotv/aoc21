@@ -4,6 +4,8 @@ import cats.data.NonEmptyList
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 
+import scala.collection.BitSet
+
 class ChallengeSpec extends AnyFlatSpec with Matchers {
   "lazy coder" should "do d01" in {
     import d01._
@@ -570,5 +572,10 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     solve(growForPart2(example)) mustBe 315
     val fullInput = growForPart2(input)
     time(solve(fullInput)) mustBe 2876
+  }
+  it should "do d16" in {
+    import d16._
+    rawDecode("D2FE28") mustBe Packet(6, 4, BitString.fromBinary("101111111000101000"))
+//    decode("D2FE28") mustBe LiteralValue(2021)
   }
 }
