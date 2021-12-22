@@ -1,4 +1,5 @@
 import cats.implicits._
+import collection.mutable
 
 object d16 {
   // BITS transmission = packet
@@ -15,11 +16,22 @@ object d16 {
   sealed trait DecodedPacket
   case class LiteralValue(value: Int) extends DecodedPacket
   object LiteralValue {
-    def decode(data: BitString): LiteralValue =
-      ???
+    def decode(data: Bits): LiteralValue = {
+      val groups = data.grouped(5)
+      val buffer = mutable.ListBuffer.empty[Boolean]
+      var lastGroupSeen = false
+      for (group <- groups) {
+        if (!lastGroupSeen) {
+          val h :: rest = group
+          buffer ++= rest
+          lastGroupSeen = !h
+        }
+      }
+      LiteralValue(buffer.toList.toDecimal)
+    }
   }
 
-  case class Packet(version: Int, typeID: Int, data: BitString) {
+  case class Packet(version: Int, typeID: Int, data: Bits) {
     def decode: DecodedPacket = {
       typeID match {
         case 4 => LiteralValue.decode(data)
@@ -27,40 +39,33 @@ object d16 {
     }
   }
   object Packet {
-    def from(bs: BitString): Packet = {
-      println(bs)
-      val (header, data) = bs.splitAt(6)
-      println(header)
+    def from(bits: Bits): Packet = {
+      val (header, data) = bits.splitAt(6)
       val (version, typeID) = header.splitAt(3)
-      println(version)
-      println(typeID)
       Packet(version = version.toDecimal, typeID = typeID.toDecimal, data = data)
     }
   }
-  def decode(line: String): DecodedPacket = {
+  def decode(line: String): DecodedPacket =
     rawDecode(line).decode
-  }
-
-  case class BitString(bits: List[Boolean]) {
-    def splitAt(n: Int): (BitString, BitString) = {
-      val (a, b) = bits.splitAt(n)
-      (BitString(a), BitString(b))
-    }
-
-    def toBinary: String = bits.map(if (_) '1' else '0').mkString
-    def toDecimal: Int = BigInt(toBinary, 2).toInt
-  }
-  object BitString {
-    def fromBinary(s: String): BitString =
-      BitString(s.map {
-        case '0' => false
-        case '1' => true
-      }.toList)
-    def fromHex(s: String): BitString =
-      fromBinary(BigInt(s, 16).toString(2))
-  }
 
   def rawDecode(line: String): Packet = {
-    Packet.from(BitString.fromHex(line))
+    Packet.from(Bits.fromHex(line))
+  }
+
+  type Bits = List[Boolean]
+  implicit class BitsOps(bits: Bits) {
+    def toBinary: String =
+      bits.map(if (_) '1' else '0').mkString
+    def toDecimal: Int =
+      BigInt(toBinary, 2).toInt
+  }
+  object Bits {
+    def fromBinary(s: String): Bits =
+      s.map {
+        case '0' => false
+        case '1' => true
+      }.toList
+    def fromHex(s: String): Bits =
+      fromBinary(BigInt(s, 16).toString(2))
   }
 }
