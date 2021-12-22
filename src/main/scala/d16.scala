@@ -30,11 +30,27 @@ object d16 {
       LiteralValue(buffer.toList.toDecimal)
     }
   }
+  case class Operator(subPackets: List[DecodedPacket]) extends DecodedPacket
+  object Operator {
+    def decode(data: Bits): Operator = {
+      val lengthTypeID :: rest = data
+      lengthTypeID match {
+        case false =>
+          val (h, subPackets) = rest.splitAt(15)
+          val totalLengthInBits = h.toDecimal
+        case true =>
+          val (h, subPackets) = rest.splitAt(11)
+          val numberOfSubPackets = h.toDecimal
+      }
+      ???
+    }
+  }
 
   case class Packet(version: Int, typeID: Int, data: Bits) {
     def decode: DecodedPacket = {
       typeID match {
         case 4 => LiteralValue.decode(data)
+        case _ => Operator.decode(data)
       }
     }
   }
@@ -47,7 +63,6 @@ object d16 {
   }
   def decode(line: String): DecodedPacket =
     rawDecode(line).decode
-
   def rawDecode(line: String): Packet = {
     Packet.from(Bits.fromHex(line))
   }

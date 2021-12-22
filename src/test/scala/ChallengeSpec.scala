@@ -577,5 +577,6 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     import d16._
     rawDecode("D2FE28") mustBe Packet(6, 4, Bits.fromBinary("101111111000101000"))
     decode("D2FE28") mustBe LiteralValue(2021)
+    decode("38006F45291200") mustBe Operator(List(LiteralValue(10), LiteralValue(20)))
   }
 }
