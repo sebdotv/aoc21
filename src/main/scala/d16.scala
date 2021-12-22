@@ -43,16 +43,36 @@ object d16 {
   case class OperatorPacketData(subPackets: List[Packet]) extends PacketData
   object OperatorPacketData {
     def parse(data: Bits): ParseResult[OperatorPacketData] = {
-//      val lengthTypeID :: rest = data
-//      lengthTypeID match {
-//        case false =>
-//          val (h, subPackets) = rest.splitAt(15)
-//          val totalLengthInBits = h.toDecimal
-//        case true =>
-//          val (h, subPackets) = rest.splitAt(11)
-//          val numberOfSubPackets = h.toDecimal
-//      }
-      ???
+      val lengthTypeID :: rest = data
+      println(show"lengthTypeID=$lengthTypeID, rest=$rest")
+      val parseResult = lengthTypeID match {
+        case false =>
+          val (h, subPackets) = rest.splitAt(15)
+          val totalLengthInBits = h.toDecimal
+          println(show"totalLengthInBits=$totalLengthInBits, subPackets=$subPackets")
+          @tailrec
+          def it(remainingBits: Int, remainder: Bits, acc: List[Packet]): ParseResult[List[Packet]] = {
+            println(show"it($remainingBits, $remainder, ${acc.toString})")
+            if (remainingBits === 0) (acc, remainder)
+            else {
+              val (packet, updatedRemainder) = Packet.parse(remainder)
+              it(remainingBits - (remainder.size - updatedRemainder.size), updatedRemainder, packet :: acc)
+            }
+          }
+          it(totalLengthInBits, subPackets, Nil)
+        case true =>
+          val (h, subPackets) = rest.splitAt(11)
+          val numberOfSubPackets = h.toDecimal
+          @tailrec
+          def it(n: Int, remainder: Bits, acc: List[Packet]): ParseResult[List[Packet]] =
+            if (n === 0) (acc, remainder)
+            else {
+              val (packet, updatedRemainder) = Packet.parse(remainder)
+              it(n - 1, updatedRemainder, packet :: acc)
+            }
+          it(numberOfSubPackets, subPackets, Nil)
+      }
+      parseResult.leftMap(subPackets => OperatorPacketData(subPackets.reverse))
     }
   }
 
@@ -67,6 +87,7 @@ object d16 {
     def parse(bits: Bits): ParseResult[Packet] = {
       val (header, data) = bits.splitAt(6)
       val (versionB, typeIDB) = header.splitAt(3)
+      println(show"versionB=$versionB, typeIDB=$typeIDB, data=$data")
       val typeID = typeIDB.toDecimal
       PacketData
         .parse(typeID, data)
@@ -110,7 +131,10 @@ object d16 {
         case '0' => false
         case '1' => true
       }.toList
-    def fromHex(s: String): Bits =
-      fromBinary(BigInt(s, 16).toString(2))
+    def fromHex(s: String): Bits = {
+      val raw = BigInt(s, 16).toString(2)
+      val leftPadded = ("0" * (raw.length % 4)) + raw
+      fromBinary(leftPadded)
+    }
   }
 }
