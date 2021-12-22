@@ -48,6 +48,7 @@ object d16 {
       val parseResult = lengthTypeID match {
         case false =>
           val (h, subPackets) = rest.splitAt(15)
+          println(show"h=$h subPackets=$subPackets")
           val totalLengthInBits = h.toDecimal
           println(show"totalLengthInBits=$totalLengthInBits, subPackets=$subPackets")
           @tailrec
@@ -85,6 +86,7 @@ object d16 {
   }
   object Packet {
     def parse(bits: Bits): ParseResult[Packet] = {
+      println(show"Packet.parse($bits)")
       val (header, data) = bits.splitAt(6)
       val (versionB, typeIDB) = header.splitAt(3)
       println(show"versionB=$versionB, typeIDB=$typeIDB, data=$data")
@@ -133,7 +135,9 @@ object d16 {
       }.toList
     def fromHex(s: String): Bits = {
       val raw = BigInt(s, 16).toString(2)
-      val leftPadded = ("0" * (raw.length % 4)) + raw
+      val modulo = raw.length % 4
+      val padding = (4 - modulo) % 4
+      val leftPadded = ("0" * padding) + raw
       fromBinary(leftPadded)
     }
   }

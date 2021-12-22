@@ -592,5 +592,15 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     inside(parseNode("8A004A801A8002F478")) { case n @ Operator(4, List(Operator(1, List(Operator(5, List(LiteralValue(6, _))))))) =>
       n.versionSum mustBe 16
     }
+    inside(parseNode("620080001611562C8802118E34")) {
+      case n @ Operator(
+            3,
+            List(
+              Operator(_, List(LiteralValue(_, _), LiteralValue(_, _))),
+              Operator(_, List(LiteralValue(_, _), LiteralValue(_, _)))
+            )
+          ) =>
+        n.versionSum mustBe 12
+    }
   }
 }
