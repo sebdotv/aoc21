@@ -574,25 +574,26 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   }
   it should "do d16" in {
     import d16._
-    parsePacket("D2FE28") mustBe Packet(6, 4, LiteralValuePacketData(2021))
-    inside(parsePacket("38006F45291200")) { packet =>
+    // examples
+    parse("D2FE28") mustBe Packet(6, 4, LiteralValuePacketData(2021))
+    inside(parse("38006F45291200")) { packet =>
       packet.version mustBe 1
       packet.typeID mustBe 6
       inside(packet.data) { case OperatorPacketData(subPackets) =>
         subPackets.map(_.data) mustBe List(LiteralValuePacketData(10), LiteralValuePacketData(20))
       }
     }
-    inside(parsePacket("EE00D40C823060")) { packet =>
+    inside(parse("EE00D40C823060")) { packet =>
       packet.version mustBe 7
       packet.typeID mustBe 3
       inside(packet.data) { case OperatorPacketData(subPackets) =>
         subPackets.map(_.data) mustBe List(LiteralValuePacketData(1), LiteralValuePacketData(2), LiteralValuePacketData(3))
       }
     }
-    inside(parseNode("8A004A801A8002F478")) { case n @ Operator(4, List(Operator(1, List(Operator(5, List(LiteralValue(6, _))))))) =>
+    inside(parseAsNode("8A004A801A8002F478")) { case n @ Operator(4, List(Operator(1, List(Operator(5, List(LiteralValue(6, _))))))) =>
       n.versionSum mustBe 16
     }
-    inside(parseNode("620080001611562C8802118E34")) {
+    inside(parseAsNode("620080001611562C8802118E34")) {
       case n @ Operator(
             3,
             List(
@@ -601,6 +602,25 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
             )
           ) =>
         n.versionSum mustBe 12
+    }
+    inside(parseAsNode("C0015000016115A2E0802F182340")) {
+      case n @ Operator(
+            _,
+            List(
+              Operator(_, List(LiteralValue(_, _), LiteralValue(_, _))),
+              Operator(_, List(LiteralValue(_, _), LiteralValue(_, _)))
+            )
+          ) =>
+        n.versionSum mustBe 23
+    }
+    inside(parseAsNode("A0016C880162017C3686B18A3D4780")) {
+      case n @ Operator(
+            _,
+            List(
+              Operator(_, List(Operator(_, List(LiteralValue(_, _), LiteralValue(_, _), LiteralValue(_, _), LiteralValue(_, _), LiteralValue(_, _)))))
+            )
+          ) =>
+        n.versionSum mustBe 31
     }
   }
 }
