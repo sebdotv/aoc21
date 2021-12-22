@@ -15,7 +15,7 @@ object d16 {
       }
   }
 
-  case class LiteralValuePacketData(value: Int) extends PacketData
+  case class LiteralValuePacketData(value: Long) extends PacketData
   object LiteralValuePacketData {
     def parse(data: Bits): ParseResult[LiteralValuePacketData] = {
       @tailrec
@@ -34,7 +34,7 @@ object d16 {
       val lengthTypeID :: rest = data
       val parseResult = if (!lengthTypeID) {
         val (h, subPackets) = rest.splitAt(15)
-        val totalLengthInBits = h.toDecimal
+        val totalLengthInBits = h.toDecimal.toInt
         @tailrec
         def it(remainingBits: Int, remainder: Bits, acc: List[Packet]): ParseResult[List[Packet]] = {
           if (remainingBits === 0) (acc, remainder)
@@ -46,7 +46,7 @@ object d16 {
         it(totalLengthInBits, subPackets, Nil)
       } else {
         val (h, subPackets) = rest.splitAt(11)
-        val numberOfSubPackets = h.toDecimal
+        val numberOfSubPackets = h.toDecimal.toInt
         @tailrec
         def it(n: Int, remainder: Bits, acc: List[Packet]): ParseResult[List[Packet]] =
           if (n === 0) (acc, remainder)
@@ -66,15 +66,36 @@ object d16 {
         case LiteralValuePacketData(value)  => LiteralValue(version = version, value = value)
         case OperatorPacketData(subPackets) => Operator(version = version, children = subPackets.map(_.toNode))
       }
+
+    def value: Long = data match {
+      case LiteralValuePacketData(value) => value
+      case OperatorPacketData(subPackets) =>
+        val values = subPackets.map(_.value)
+        typeID match {
+          case 0 => values.sum
+          case 1 => values.product
+          case 2 => values.min
+          case 3 => values.max
+          case 5 =>
+            val List(a, b) = values
+            if (a > b) 1 else 0
+          case 6 =>
+            val List(a, b) = values
+            if (a < b) 1 else 0
+          case 7 =>
+            val List(a, b) = values
+            if (a === b) 1 else 0
+        }
+    }
   }
   object Packet {
     def parse(bits: Bits): ParseResult[Packet] = {
       val (header, data) = bits.splitAt(6)
       val (versionB, typeIDB) = header.splitAt(3)
-      val typeID = typeIDB.toDecimal
+      val typeID = typeIDB.toDecimal.toInt
       PacketData
         .parse(typeID, data)
-        .leftMap(Packet(version = versionB.toDecimal, typeID = typeID, _))
+        .leftMap(Packet(version = versionB.toDecimal.toInt, typeID = typeID, _))
     }
   }
 
@@ -93,7 +114,7 @@ object d16 {
       version + children.map(_.versionSum).sum
   }
   case class Operator(version: Int, children: List[Node]) extends Node
-  case class LiteralValue(version: Int, value: Int) extends Node {
+  case class LiteralValue(version: Int, value: Long) extends Node {
     override def children: List[Node] = Nil
   }
 
@@ -102,8 +123,8 @@ object d16 {
   implicit class BitsOps(bits: Bits) {
     def toBinary: String =
       bits.map(if (_) '1' else '0').mkString
-    def toDecimal: Int =
-      BigInt(toBinary, 2).toInt
+    def toDecimal: Long =
+      BigInt(toBinary, 2).toLong
   }
   object Bits {
     def fromBinary(s: String): Bits =
@@ -113,8 +134,7 @@ object d16 {
       }.toList
     def fromHex(s: String): Bits = {
       val raw = BigInt(s, 16).toString(2)
-      val modulo = raw.length % 4
-      val padding = (4 - modulo) % 4
+      val padding = s.length * 4 - raw.length
       val leftPadded = ("0" * padding) + raw
       fromBinary(leftPadded)
     }

@@ -623,6 +623,17 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         n.versionSum mustBe 31
     }
     // input
-    parseAsNode(unsafeLoadLine("input/16.txt")).versionSum mustBe 866
+    val input = parse(unsafeLoadLine("input/16.txt"))
+    input.toNode.versionSum mustBe 866
+    // part 2
+    parse("C200B40A82").value mustBe 3
+    parse("04005AC33890").value mustBe 54
+    parse("880086C3E88112").value mustBe 7
+    parse("CE00C43D881120").value mustBe 9
+    parse("D8005AC2A8F0").value mustBe 1
+    parse("F600BC2D8F").value mustBe 0
+    parse("9C005AC2F8F0").value mustBe 0
+    parse("9C0141080250320F1802104A08").value mustBe 1
+    input.value mustBe 1392637195518L
   }
 }
