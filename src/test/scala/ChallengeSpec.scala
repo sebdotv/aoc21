@@ -622,5 +622,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
           ) =>
         n.versionSum mustBe 31
     }
+    // input
+    parseAsNode(unsafeLoadLine("input/16.txt")).versionSum mustBe 866
   }
 }
