@@ -1,5 +1,6 @@
 import TestUtils._
 import aoc._
+import aoc.trigo.Vect
 import cats.data.NonEmptyList
 import org.scalatest.Inside._
 import org.scalatest.flatspec.AnyFlatSpec
@@ -572,6 +573,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     val fullInput = growForPart2(input)
     time(solve(fullInput)) mustBe 2876
   }
+
   it should "do d16" in {
     import d16._
     // examples
@@ -635,5 +637,27 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     parse("9C005AC2F8F0").value mustBe 0
     parse("9C0141080250320F1802104A08").value mustBe 1
     input.value mustBe 1392637195518L
+  }
+
+  it should "do d17" in {
+    import d17._
+    val example = State.initial(parse("target area: x=20..30, y=-10..-5"))(Vect(7, 2))
+    println(example)
+    example.stepN(7).toGrid mustBe
+      """.............#....#............
+        |.......#..............#........
+        |...............................
+        |S........................#.....
+        |...............................
+        |...............................
+        |...........................#...
+        |...............................
+        |....................TTTTTTTTTTT
+        |....................TTTTTTTTTTT
+        |....................TTTTTTTT#TT
+        |....................TTTTTTTTTTT
+        |....................TTTTTTTTTTT
+        |....................TTTTTTTTTTT""".stripMargin
+
   }
 }

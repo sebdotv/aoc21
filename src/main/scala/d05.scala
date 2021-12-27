@@ -7,16 +7,16 @@ import scala.annotation.tailrec
 object d05 {
   implicit class VectOps(vect: Vect) {
     def dir(withDiagonals: Boolean): Option[Vect] = {
-      val Vect(start, x, y) = vect
-      if (x > 0 && y === 0) Some(Vect(start, 1, 0))
-      else if (x < 0 && y === 0) Some(Vect(start, -1, 0))
-      else if (x === 0 && y > 0) Some(Vect(start, 0, 1))
-      else if (x === 0 && y < 0) Some(Vect(start, 0, -1))
+      val Vect(x, y) = vect
+      if (x > 0 && y === 0) Some(Vect(1, 0))
+      else if (x < 0 && y === 0) Some(Vect(-1, 0))
+      else if (x === 0 && y > 0) Some(Vect(0, 1))
+      else if (x === 0 && y < 0) Some(Vect(0, -1))
       else if (withDiagonals) {
-        if (x === y && x > 0) Some(Vect(start, 1, 1))
-        else if (x === y && x < 0) Some(Vect(start, -1, -1))
-        else if (x === -y && x > 0) Some(Vect(start, 1, -1))
-        else if (x === -y && x < 0) Some(Vect(start, -1, 1))
+        if (x === y && x > 0) Some(Vect(1, 1))
+        else if (x === y && x < 0) Some(Vect(-1, -1))
+        else if (x === -y && x > 0) Some(Vect(1, -1))
+        else if (x === -y && x < 0) Some(Vect(-1, 1))
         else None
       } else None
     }

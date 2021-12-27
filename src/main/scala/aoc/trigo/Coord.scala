@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 
 final case class Coord(x: Int, y: Int) {
   def -(start: Coord): Vect =
-    Vect(start = start, x - start.x, y - start.y)
+    Vect(x - start.x, y - start.y)
   def +(v: Vect): Coord =
     Coord(x = x + v.x, y = y + v.y)
 }
