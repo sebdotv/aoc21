@@ -11,13 +11,14 @@ object d17 {
       copy(
         pos = pos + velocity,
         velocity = Vect(
-          x = velocity.x + velocity.x match {
+          x = velocity.x + (velocity.x match {
             case i if i > 0 => -1
             case i if i < 0 => 1
             case 0          => 0
-          },
+          }),
           y = velocity.y - 1
-        )
+        ),
+        history = pos :: history
       )
     @tailrec
     def stepN(n: Int): State =
@@ -28,7 +29,7 @@ object d17 {
       targetArea.coords.foreach(cells(_) = 'T')
       (pos :: history).foreach(cells(_) = '#')
       cells(Start) = 'S'
-      (minY to maxY).map { y =>
+      (maxY to minY by -1).map { y =>
         (minX to maxX).map { x =>
           cells.getOrElse(Coord(x, y), '.')
         }.mkString
@@ -49,5 +50,9 @@ object d17 {
     val Re = """target area: x=([-0-9]+)\.\.([-0-9]+), y=([-0-9]+)\.\.([-0-9]+)""".r
     val Re(minX, maxX, minY, maxY) = input
     TargetArea(minX = minX.toInt, maxX = maxX.toInt, minY = minY.toInt, maxY = maxY.toInt)
+  }
+
+  def part1(targetArea: TargetArea): (Coord, Int) = {
+    ???
   }
 }
