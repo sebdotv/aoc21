@@ -650,7 +650,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
 //
 //    for (n <- 0 to 3) dump(example1.stepN(n))
 
-    State.initial(example)(Vect(7, 2)).stepN(7).toGrid mustBe
+    State.initial(example)(Vect(7, 2)).stepUntilHitOrMiss.toGrid mustBe
       """.............#....#............
         |.......#..............#........
         |...............................
@@ -665,7 +665,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(6, 3)).stepN(9).toGrid mustBe
+    State.initial(example)(Vect(6, 3)).stepUntilHitOrMiss.toGrid mustBe
       """...............#..#............
         |...........#........#..........
         |...............................
@@ -683,7 +683,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................T#TTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(9, 0)).stepN(4).toGrid mustBe
+    State.initial(example)(Vect(9, 0)).stepUntilHitOrMiss.toGrid mustBe
       """S........#.....................
         |.................#.............
         |...............................
@@ -695,7 +695,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(17, -4)).stepN(4).toGrid mustBe
+    State.initial(example)(Vect(17, -4)).stepUntilHitOrMiss.stepN(2).toGrid mustBe
       """S..............................................................
         |...............................................................
         |...............................................................
@@ -719,6 +719,11 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |...............................................................
         |...............................................................
         |..............................................................#""".stripMargin
-    part1(example) mustBe (Coord(6, 9), 45)
+
+//    part1(example) mustBe (Coord(6, 9), 45)
+
+    val input = parse(unsafeLoadLine("input/17.txt"))
+//    println(State.initial(input)(Vect(10, 20)).toGrid)
+
   }
 }
