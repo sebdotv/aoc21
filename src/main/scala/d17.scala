@@ -1,4 +1,5 @@
 import aoc.trigo._
+import cats.Eq
 import cats.implicits._
 
 import scala.annotation.tailrec
@@ -32,13 +33,13 @@ object d17 {
     def stepN(n: Int): State =
       if (n === 0) this else step.stepN(n - 1)
     @tailrec
-    def stepUntilHitOrMiss: State =
+    def runUntilHitOrMiss: State =
       status match {
-        case TargetArea.NotReached            => step.stepUntilHitOrMiss
+        case TargetArea.NotReached            => step.runUntilHitOrMiss
         case TargetArea.Hit | TargetArea.Miss => this
       }
 
-    def toStrLines: List[String] = {
+    def toGridLines: List[String] = {
       val (minX, minY, maxX, maxY) = Coord.computeExtent(List(Start) ++ history ++ List(pos) ++ targetArea.coords)
       val cells = mutable.Map.empty[Coord, Char]
       targetArea.coords.foreach(cells(_) = 'T')
@@ -50,7 +51,7 @@ object d17 {
         }.mkString
       }.toList
     }
-    def toGrid: String = toStrLines.mkString("\n")
+    def toGrid: String = toGridLines.mkString("\n")
   }
   object State {
     val Start: Coord = Coord.zero
@@ -70,6 +71,7 @@ object d17 {
   }
   object TargetArea {
     sealed trait Status
+    implicit val eqStatus: Eq[Status] = Eq.fromUniversalEquals
     case object NotReached extends Status
     case object Hit extends Status
     case object Miss extends Status
@@ -81,7 +83,20 @@ object d17 {
     TargetArea(minX = minX.toInt, maxX = maxX.toInt, minY = minY.toInt, maxY = maxY.toInt)
   }
 
-  def part1(targetArea: TargetArea): (Coord, Int) = {
-    ???
+  private def maxHeight(targetArea: TargetArea)(velocity: Vect): Option[Int] = {
+    val finalState = State.initial(targetArea)(velocity).runUntilHitOrMiss
+    if (finalState.status === TargetArea.Hit) Some(finalState.history.map(_.y).max)
+    else None
+  }
+
+  def part1(targetArea: TargetArea): (Vect, Int) = {
+    (0 to targetArea.minX.abs)
+      .flatMap { x =>
+        (0 to targetArea.minY.abs).flatMap { y =>
+          val v = Vect(x, y)
+          maxHeight(targetArea)(v).map(h => v -> h).toList
+        }
+      }
+      .maxBy(_._2)
   }
 }

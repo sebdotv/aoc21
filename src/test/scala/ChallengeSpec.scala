@@ -642,15 +642,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
   it should "do d17" in {
     import d17._
     val example = parse("target area: x=20..30, y=-10..-5")
-    //    def dump(state: State): Unit = {
-//      println(s"velocity=${state.velocity}")
-//      println(state.toGrid)
-//      println()
-//    }
-//
-//    for (n <- 0 to 3) dump(example1.stepN(n))
-
-    State.initial(example)(Vect(7, 2)).stepUntilHitOrMiss.toGrid mustBe
+    State.initial(example)(Vect(7, 2)).runUntilHitOrMiss.toGrid mustBe
       """.............#....#............
         |.......#..............#........
         |...............................
@@ -665,7 +657,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(6, 3)).stepUntilHitOrMiss.toGrid mustBe
+    State.initial(example)(Vect(6, 3)).runUntilHitOrMiss.toGrid mustBe
       """...............#..#............
         |...........#........#..........
         |...............................
@@ -683,7 +675,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................T#TTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(9, 0)).stepUntilHitOrMiss.toGrid mustBe
+    State.initial(example)(Vect(9, 0)).runUntilHitOrMiss.toGrid mustBe
       """S........#.....................
         |.................#.............
         |...............................
@@ -695,7 +687,7 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT
         |....................TTTTTTTTTTT""".stripMargin
-    State.initial(example)(Vect(17, -4)).stepUntilHitOrMiss.stepN(2).toGrid mustBe
+    State.initial(example)(Vect(17, -4)).runUntilHitOrMiss.stepN(2).toGrid mustBe
       """S..............................................................
         |...............................................................
         |...............................................................
@@ -719,11 +711,9 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |...............................................................
         |...............................................................
         |..............................................................#""".stripMargin
-
-//    part1(example) mustBe (Coord(6, 9), 45)
-
+    part1(example) mustBe Vect(6, 9) -> 45
+    // input
     val input = parse(unsafeLoadLine("input/17.txt"))
-//    println(State.initial(input)(Vect(10, 20)).toGrid)
-
+    part1(input) mustBe Vect(17, 99) -> 4950
   }
 }
