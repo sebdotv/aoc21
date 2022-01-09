@@ -89,14 +89,21 @@ object d17 {
     else None
   }
 
-  def part1(targetArea: TargetArea): (Vect, Int) = {
-    (0 to targetArea.minX.abs)
+  private def bruteForce(targetArea: TargetArea) = {
+    val maxY = math.max(targetArea.minY.abs, targetArea.maxY.abs)
+    (0 to targetArea.maxX.abs)
       .flatMap { x =>
-        (0 to targetArea.minY.abs).flatMap { y =>
+        (-maxY to maxY).flatMap { y =>
           val v = Vect(x, y)
           maxHeight(targetArea)(v).map(h => v -> h).toList
         }
       }
-      .maxBy(_._2)
   }
+  def part1(targetArea: TargetArea): (Vect, Int) =
+    bruteForce(targetArea)
+      .maxBy(_._2)
+  def part2(targetArea: TargetArea): Set[Vect] =
+    bruteForce(targetArea)
+      .map(_._1)
+      .toSet
 }

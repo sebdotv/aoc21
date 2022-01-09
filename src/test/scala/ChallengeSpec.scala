@@ -1,6 +1,6 @@
 import TestUtils._
 import aoc._
-import aoc.trigo.{Coord, Vect}
+import aoc.trigo.Vect
 import cats.data.NonEmptyList
 import org.scalatest.Inside._
 import org.scalatest.flatspec.AnyFlatSpec
@@ -715,5 +715,8 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     // input
     val input = parse(unsafeLoadLine("input/17.txt"))
     part1(input) mustBe Vect(17, 99) -> 4950
+    // part 2
+    part2(example).size mustBe 112
+    part2(input).size mustBe 1477
   }
 }
