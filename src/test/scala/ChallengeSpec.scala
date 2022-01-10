@@ -731,5 +731,6 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |[[[9,[3,8]],[[0,9],6]],[[[3,7],[4,9]],3]]
         |[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]""".stripMargin.splitLines.map(parse)
     example.foreach(println)
+    example.map(n => toBidi(None, n)).foreach(println)
   }
 }
