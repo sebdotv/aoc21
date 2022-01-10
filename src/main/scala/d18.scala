@@ -190,4 +190,9 @@ object d18 {
     val a :: b :: rest = numbers
     rest.foldLeft(add(a, b))((acc, curr) => add(acc, curr))
   }
+
+  def part2(numbers: List[SnailfishNumber]): Int = {
+    val sums = for ((a, ia) <- numbers.zipWithIndex; (b, ib) <- numbers.zipWithIndex if ia =!= ib) yield add(a, b)
+    sums.map(_.magnitude).max
+  }
 }

@@ -783,7 +783,8 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
     parse("[[[[3,0],[5,3]],[4,4]],[5,5]]").magnitude mustBe 791
     parse("[[[[5,0],[7,4]],[5,5]],[6,6]]").magnitude mustBe 1137
     parse("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]").magnitude mustBe 3488
-    val example = finalSum("""[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+    val example =
+      """[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
         |[[[5,[2,8]],4],[5,[[9,9],0]]]
         |[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
         |[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
@@ -792,11 +793,15 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |[[[[5,4],[7,7]],8],[[8,3],8]]
         |[[9,3],[[9,9],[6,[4,9]]]]
         |[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
-        |[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]""".stripMargin.splitLines.map(parse))
-    example.show mustBe "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]"
-    example.magnitude mustBe 4140
+        |[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]""".stripMargin.splitLines.map(parse)
+    val exampleFinalSum = finalSum(example)
+    exampleFinalSum.show mustBe "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]"
+    exampleFinalSum.magnitude mustBe 4140
     // input
-    val input = finalSum(unsafeLoad("input/18.txt").map(parse))
-    input.magnitude mustBe 3574
+    val input = unsafeLoad("input/18.txt").map(parse)
+    finalSum(input).magnitude mustBe 3574
+    // part 2
+    part2(example) mustBe 3993
+    part2(input) mustBe 4763
   }
 }
