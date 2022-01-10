@@ -136,11 +136,18 @@ object d18 {
 
   // To explode a pair, the pair's left value is added to the first regular number to the left of the exploding pair (if any),
   // and the pair's right value is added to the first regular number to the right of the exploding pair (if any).
-  // Exploding pairs will always consist of two regular numbers. Then, the entire exploding pair is replaced with the regular number 0.
+  // Exploding pairs will always consist of two regular numbers.
+  // Then, the entire exploding pair is replaced with the regular number 0.
   def explode(pair: MutableBidiPair): Unit = {
     pair.prevLeaf.foreach(_.add(pair.leftNumberUnsafe().value))
     pair.nextLeaf.foreach(_.add(pair.rightNumberUnsafe().value))
     pair.replaceInParent(RegularNumber(0))
   }
+
+  // To split a regular number, replace it with a pair;
+  // the left element of the pair should be the regular number divided by two and rounded down,
+  // while the right element of the pair should be the regular number divided by two and rounded up.
+  def split(rn: MutableBidiRegularNumber): Unit =
+    rn.replaceInParent(Pair(RegularNumber(rn.value / 2), RegularNumber((rn.value + 1) / 2)))
 
 }
