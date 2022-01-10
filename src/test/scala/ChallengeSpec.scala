@@ -2,6 +2,7 @@ import TestUtils._
 import aoc._
 import aoc.trigo.Vect
 import cats.data.NonEmptyList
+import cats.implicits.toShow
 import org.scalatest.Inside._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
@@ -724,55 +725,78 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
 
   it should "do d18" in {
     import d18._
-    val example =
-      """[1,2]
-        |[[1,2],3]
-        |[9,[8,7]]
-        |[[1,9],[8,5]]
-        |[[[[1,2],[3,4]],[[5,6],[7,8]]],9]
-        |[[[9,[3,8]],[[0,9],6]],[[[3,7],[4,9]],3]]
-        |[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]""".stripMargin.splitLines.map(parse)
-    example.foreach(println)
-    example.map(toBidi).foreach(println)
-
-    def allNodes(n: BidiSnailfishNumber): List[BidiSnailfishNumber] =
-      n match {
-        case MutableBidiRegularNumber(parent, value) => List(n)
-        case pair: MutableBidiPair                   => List(n) ++ allNodes(pair.left) ++ allNodes(pair.right)
-      }
     def testExplode(s: String, pairText: String, expected: String): Unit = {
-      inside(toBidi(parse(s))) { case root: MutableBidiPair =>
+      inside(toMutable(parse(s))) { case root: MutablePairNode =>
         root.toText mustBe s
-        val List(pair) = allNodes(root).collect { case pair: MutableBidiPair => pair }.filter(_.toText === pairText)
+        val List(pair) = root.allNodes.collect { case pair: MutablePairNode => pair }.filter(_.toText === pairText)
         explode(pair)
         root.toText mustBe expected
       }
     }
     def testSplit(s: String, rnText: String, expected: String): Unit = {
-      inside(toBidi(parse(s))) { case root: MutableBidiPair =>
+      inside(toMutable(parse(s))) { case root: MutablePairNode =>
         root.toText mustBe s
-        val List(rn) = allNodes(root).collect { case rn: MutableBidiRegularNumber => rn }.filter(_.toText === rnText)
+        val List(rn) = root.allNodes.collect { case rn: MutableRegularNumberNode => rn }.filter(_.toText === rnText)
         split(rn)
         root.toText mustBe expected
       }
     }
-//    def testSplit(value: Int, expected: String): Unit = {
-//      inside(toBidi(parse(value.toString))) { case rn:  MutableBidiRegularNumber =>
-//        split(rn)
-//      }
-//    }
-
     testExplode("[[[[[9,8],1],2],3],4]", "[9,8]", "[[[[0,9],2],3],4]")
     testExplode("[7,[6,[5,[4,[3,2]]]]]", "[3,2]", "[7,[6,[5,[7,0]]]]")
     testExplode("[[6,[5,[4,[3,2]]]],1]", "[3,2]", "[[6,[5,[7,0]]],3]")
     testExplode("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]", "[7,3]", "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")
     testExplode("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]", "[3,2]", "[[3,[2,[8,0]]],[9,[5,[7,0]]]]")
-
     testSplit("[[[[0,7],4],[15,[0,13]]],[1,1]]", "15", "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]")
     testSplit("[[[[0,7],4],[[7,8],[0,13]]],[1,1]]", "13", "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]")
-
-//    testSplit(10, "[5,5]")
-//    testSplit(11, "[5,6]")
-//    testSplit(12, "[6,6]")
+    add(parse("[[[[4,3],4],4],[7,[[8,4],9]]]"), parse("[1,1]")).show mustBe "[[[[0,7],4],[[7,8],[6,0]]],[8,1]]"
+    finalSum("""[1,1]
+               |[2,2]
+               |[3,3]
+               |[4,4]""".stripMargin.splitLines.map(parse)).show mustBe "[[[[1,1],[2,2]],[3,3]],[4,4]]"
+    finalSum("""[1,1]
+               |[2,2]
+               |[3,3]
+               |[4,4]
+               |[5,5]""".stripMargin.splitLines.map(parse)).show mustBe "[[[[3,0],[5,3]],[4,4]],[5,5]]"
+    finalSum("""[1,1]
+               |[2,2]
+               |[3,3]
+               |[4,4]
+               |[5,5]
+               |[6,6]""".stripMargin.splitLines.map(parse)).show mustBe "[[[[5,0],[7,4]],[5,5]],[6,6]]"
+    finalSum("""[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]
+        |[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]
+        |[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]
+        |[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]
+        |[7,[5,[[3,8],[1,4]]]]
+        |[[2,[2,2]],[8,[8,1]]]
+        |[2,9]
+        |[1,[[[9,3],9],[[9,0],[0,7]]]]
+        |[[[5,[7,4]],7],1]
+        |[[[[4,2],2],6],[8,7]]""".stripMargin.splitLines.map(parse)).show mustBe "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]"
+    parse("[9,1]").magnitude mustBe 29
+    parse("[1,9]").magnitude mustBe 21
+    parse("[[9,1],[1,9]]").magnitude mustBe 129
+    parse("[[1,2],[[3,4],5]]").magnitude mustBe 143
+    parse("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]").magnitude mustBe 1384
+    parse("[[[[1,1],[2,2]],[3,3]],[4,4]]").magnitude mustBe 445
+    parse("[[[[3,0],[5,3]],[4,4]],[5,5]]").magnitude mustBe 791
+    parse("[[[[5,0],[7,4]],[5,5]],[6,6]]").magnitude mustBe 1137
+    parse("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]").magnitude mustBe 3488
+    val example = finalSum("""[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+        |[[[5,[2,8]],4],[5,[[9,9],0]]]
+        |[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
+        |[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
+        |[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]
+        |[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]
+        |[[[[5,4],[7,7]],8],[[8,3],8]]
+        |[[9,3],[[9,9],[6,[4,9]]]]
+        |[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
+        |[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]""".stripMargin.splitLines.map(parse))
+    example.show mustBe "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]"
+    example.magnitude mustBe 4140
+    // input
+    val input = finalSum(unsafeLoad("input/18.txt").map(parse))
+    input.magnitude mustBe 3574
   }
 }
