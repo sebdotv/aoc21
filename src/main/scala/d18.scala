@@ -6,23 +6,6 @@ object d18 {
   case class RegularNumber(value: Int) extends SnailfishNumber
   case class Pair(left: SnailfishNumber, right: SnailfishNumber) extends SnailfishNumber
 
-  sealed trait BidiSnailfishNumber
-  case class MutableBidiRegularNumber(parent: Option[MutableBidiPair], var value: Int) extends BidiSnailfishNumber {
-    override def toString: String =
-      s"MutableBidiRegularNumber(${if (parent.isEmpty) "None" else "Some(_)"}, $value)"
-  }
-  class MutableBidiPair(
-      val parent: Option[MutableBidiPair],
-      var leftOption: Option[BidiSnailfishNumber] = None,
-      var rightOption: Option[BidiSnailfishNumber] = None
-  ) extends BidiSnailfishNumber {
-    def left: BidiSnailfishNumber = leftOption.unsafeGet()
-    def right: BidiSnailfishNumber = rightOption.unsafeGet()
-
-    override def toString: String =
-      s"MutableBidiPair(${if (parent.isEmpty) "None" else "Some(_)"}, $left, $right)"
-  }
-
   def parse(s: String): SnailfishNumber = {
     val NumberRe = """^(\d+)(.*)""".r
     type ParseResult = (SnailfishNumber, String)
@@ -57,6 +40,23 @@ object d18 {
 //      case n @ RegularNumber(_) => MutableContainer(parent, n)
 //      case Pair(left, right)    => MutableContainer(parent, )
 //    }
+
+  sealed trait BidiSnailfishNumber
+  case class MutableBidiRegularNumber(parent: Option[MutableBidiPair], var value: Int) extends BidiSnailfishNumber {
+    override def toString: String =
+      s"MutableBidiRegularNumber(${if (parent.isEmpty) "None" else "Some(_)"}, $value)"
+  }
+  class MutableBidiPair(
+      val parent: Option[MutableBidiPair],
+      var leftOption: Option[BidiSnailfishNumber] = None,
+      var rightOption: Option[BidiSnailfishNumber] = None
+  ) extends BidiSnailfishNumber {
+    def left: BidiSnailfishNumber = leftOption.unsafeGet()
+    def right: BidiSnailfishNumber = rightOption.unsafeGet()
+
+    override def toString: String =
+      s"MutableBidiPair(${if (parent.isEmpty) "None" else "Some(_)"}, $left, $right)"
+  }
 
   def toBidi(parent: Option[MutableBidiPair], n: SnailfishNumber): BidiSnailfishNumber =
     n match {
