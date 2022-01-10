@@ -41,8 +41,34 @@ object d18 {
 //      case Pair(left, right)    => MutableContainer(parent, )
 //    }
 
-  sealed trait BidiSnailfishNumber
+  sealed trait BidiSnailfishNumber {
+    def parent: Option[MutableBidiPair]
+    def firstLeaf: Option[MutableBidiRegularNumber]
+    def lastLeaf: Option[MutableBidiRegularNumber]
+
+    def toText: String
+
+    def replaceInParent(other: SnailfishNumber): Unit = {
+      parent match {
+        case Some(parentPair) =>
+          if (this == parentPair.left) {
+            parentPair.leftOption = Some(toBidi(Some(parentPair), other))
+          } else if (this == parentPair.right) {
+            parentPair.rightOption = Some(toBidi(Some(parentPair), other))
+          } else {
+            throw new IllegalStateException()
+          }
+        case None => throw new IllegalStateException()
+      }
+    }
+  }
+
   case class MutableBidiRegularNumber(parent: Option[MutableBidiPair], var value: Int) extends BidiSnailfishNumber {
+    override def firstLeaf: Option[MutableBidiRegularNumber] = Some(this)
+    override def lastLeaf: Option[MutableBidiRegularNumber] = Some(this)
+    def add(x: Int): Unit = value += x
+
+    override def toText: String = value.toString
     override def toString: String =
       s"MutableBidiRegularNumber(${if (parent.isEmpty) "None" else "Some(_)"}, $value)"
   }
@@ -54,11 +80,50 @@ object d18 {
     def left: BidiSnailfishNumber = leftOption.unsafeGet()
     def right: BidiSnailfishNumber = rightOption.unsafeGet()
 
+    override def firstLeaf: Option[MutableBidiRegularNumber] = left.firstLeaf
+    override def lastLeaf: Option[MutableBidiRegularNumber] = right.lastLeaf
+
+    def prevLeaf: Option[MutableBidiRegularNumber] =
+      parent match {
+        case Some(parentPair) =>
+          if (this == parentPair.left) {
+            parentPair.prevLeaf
+          } else if (this == parentPair.right) {
+            parentPair.left.lastLeaf
+          } else {
+            throw new IllegalStateException()
+          }
+        case None => None
+      }
+
+    def nextLeaf: Option[MutableBidiRegularNumber] =
+      parent match {
+        case Some(parentPair) =>
+          if (this == parentPair.left) {
+            parentPair.right.firstLeaf
+          } else if (this == parentPair.right) {
+            parentPair.nextLeaf
+          } else {
+            throw new IllegalStateException()
+          }
+        case None => None
+      }
+
+    override def toText: String = s"[${left.toText},${right.toText}]"
     override def toString: String =
       s"MutableBidiPair(${if (parent.isEmpty) "None" else "Some(_)"}, $left, $right)"
   }
 
-  def toBidi(parent: Option[MutableBidiPair], n: SnailfishNumber): BidiSnailfishNumber =
+  implicit class MutableBidiPairOps(pair: MutableBidiPair) {
+    def leftPairUnsafe(): MutableBidiPair = pair.left.asInstanceOf[MutableBidiPair]
+    def rightPairUnsafe(): MutableBidiPair = pair.right.asInstanceOf[MutableBidiPair]
+    def leftNumberUnsafe(): MutableBidiRegularNumber = pair.left.asInstanceOf[MutableBidiRegularNumber]
+    def rightNumberUnsafe(): MutableBidiRegularNumber = pair.right.asInstanceOf[MutableBidiRegularNumber]
+  }
+
+  def toBidi(n: SnailfishNumber): BidiSnailfishNumber =
+    toBidi(None, n)
+  private def toBidi(parent: Option[MutableBidiPair], n: SnailfishNumber): BidiSnailfishNumber =
     n match {
       case RegularNumber(value) =>
         MutableBidiRegularNumber(parent, value)
@@ -73,13 +138,9 @@ object d18 {
   // and the pair's right value is added to the first regular number to the right of the exploding pair (if any).
   // Exploding pairs will always consist of two regular numbers. Then, the entire exploding pair is replaced with the regular number 0.
   def explode(pair: MutableBidiPair): Unit = {
-    val left = pair.left match {
-      case MutableBidiRegularNumber(_, value) => value
-    }
-    val right = pair.right match {
-      case MutableBidiRegularNumber(_, value) => value
-    }
-
+    pair.prevLeaf.foreach(_.add(pair.leftNumberUnsafe().value))
+    pair.nextLeaf.foreach(_.add(pair.rightNumberUnsafe().value))
+    pair.replaceInParent(RegularNumber(0))
   }
 
 }

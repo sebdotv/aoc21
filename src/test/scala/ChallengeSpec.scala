@@ -6,6 +6,8 @@ import org.scalatest.Inside._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 
+import scala.annotation.tailrec
+
 class ChallengeSpec extends AnyFlatSpec with Matchers {
   "lazy coder" should "do d01" in {
     import d01._
@@ -731,6 +733,26 @@ class ChallengeSpec extends AnyFlatSpec with Matchers {
         |[[[9,[3,8]],[[0,9],6]],[[[3,7],[4,9]],3]]
         |[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]""".stripMargin.splitLines.map(parse)
     example.foreach(println)
-    example.map(n => toBidi(None, n)).foreach(println)
+    example.map(toBidi).foreach(println)
+
+    def testExplode(s: String, pairText: String, expected: String): Unit = {
+      def allNodes(n: BidiSnailfishNumber): List[BidiSnailfishNumber] =
+        n match {
+          case MutableBidiRegularNumber(parent, value) => List(n)
+          case pair: MutableBidiPair                   => List(n) ++ allNodes(pair.left) ++ allNodes(pair.right)
+        }
+      inside(toBidi(parse(s))) { case root: MutableBidiPair =>
+        root.toText mustBe s
+        val List(pair) = allNodes(root).collect { case pair: MutableBidiPair => pair }.filter(_.toText === pairText)
+        explode(pair)
+        root.toText mustBe expected
+      }
+    }
+
+    testExplode("[[[[[9,8],1],2],3],4]", "[9,8]", "[[[[0,9],2],3],4]")
+    testExplode("[7,[6,[5,[4,[3,2]]]]]", "[3,2]", "[7,[6,[5,[7,0]]]]")
+    testExplode("[[6,[5,[4,[3,2]]]],1]", "[3,2]", "[[6,[5,[7,0]]],3]")
+    testExplode("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]", "[7,3]", "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")
+    testExplode("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]", "[3,2]", "[[3,[2,[8,0]]],[9,[5,[7,0]]]]")
   }
 }
